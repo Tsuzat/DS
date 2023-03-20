@@ -4,6 +4,8 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 
+import 'default_screen.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -12,6 +14,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with WindowListener {
+  List<NavigationPaneItem> items = [
+    PaneItemHeader(
+      header: const Text("Projects"),
+    ),
+    PaneItem(
+      title: const Text("Home"),
+      icon: const Icon(FluentIcons.home),
+      body: const DefaultScreen(),
+    ),
+  ];
+
+  /// index count of paneitems
+  int _index = 0;
+
   @override
   void initState() {
     windowManager.addListener(this);
@@ -32,6 +48,20 @@ class _HomePageState extends State<HomePage> with WindowListener {
   @override
   Widget build(BuildContext context) {
     AppTheme appTheme = context.watch<AppTheme>();
+
+    List<NavigationPaneItem> footerItems = [
+      PaneItemSeparator(),
+      PaneItem(
+        title: const Text("Settings"),
+        icon: const Icon(FluentIcons.settings),
+        body: const Settings(),
+      ),
+      PaneItemAction(
+        title: const Text("Create New Project"),
+        icon: const Icon(FluentIcons.add),
+        onTap: () {},
+      )
+    ];
 
     return NavigationView(
       appBar: NavigationAppBar(
@@ -64,7 +94,14 @@ class _HomePageState extends State<HomePage> with WindowListener {
           ],
         ),
       ),
-      content: const Settings(),
+      pane: NavigationPane(
+        selected: _index,
+        onChanged: (v) => setState(() {
+          _index = v;
+        }),
+        items: items,
+        footerItems: footerItems,
+      ),
     );
   }
 }
