@@ -59,7 +59,40 @@ class _HomePageState extends State<HomePage> with WindowListener {
       PaneItemAction(
         title: const Text("Create New Project"),
         icon: const Icon(FluentIcons.add),
-        onTap: () {},
+        onTap: () async {
+          showDialog(
+            context: context,
+            builder: (context) {
+              String projectName = "";
+              return ContentDialog(
+                title: const Text('Add New Project'),
+                content: TextBox(
+                  placeholder: 'Project Name',
+                  onChanged: (value) => projectName = value,
+                ),
+                actions: [
+                  Button(
+                    child: const Text('Add Project'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      PaneItem temp = PaneItem(
+                        title: Text(projectName),
+                        icon: const Icon(FluentIcons.new_folder),
+                        body: const DefaultScreen(),
+                      );
+                      items.add(temp);
+                      setState(() {});
+                    },
+                  ),
+                  FilledButton(
+                    child: const Text('Cancel'),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              );
+            },
+          );
+        },
       )
     ];
 
