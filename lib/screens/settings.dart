@@ -21,6 +21,7 @@ const windowsWindowEffects = [
   WindowEffect.transparent,
   WindowEffect.aero,
   WindowEffect.acrylic,
+  WindowEffect.mica,
   WindowEffect.tabbed,
 ];
 
@@ -39,7 +40,7 @@ class _SettingsState extends State<Settings> {
   Widget build(BuildContext context) {
     AppTheme appTheme = context.watch<AppTheme>();
     return Padding(
-      padding: const EdgeInsets.only(right: 1),
+      padding: const EdgeInsets.only(right: 2),
       child: ScaffoldPage.scrollable(
         header: const PageHeader(
           title: Text(
