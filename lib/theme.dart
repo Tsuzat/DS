@@ -33,11 +33,8 @@ class AppTheme extends ChangeNotifier {
       color: [
         WindowEffect.solid,
         WindowEffect.acrylic,
-        WindowEffect.aero,
-        WindowEffect.tabbed,
-        WindowEffect.transparent,
       ].contains(effect)
-          ? FluentTheme.of(context).micaBackgroundColor.withOpacity(0.7)
+          ? FluentTheme.of(context).micaBackgroundColor.withOpacity(0.05)
           : Colors.transparent,
       dark: FluentTheme.of(context).brightness.isDark,
     );
