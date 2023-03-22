@@ -1,9 +1,9 @@
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:dlds/screens/settings.dart';
 import 'package:dlds/theme.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:window_manager/window_manager.dart';
-
 import 'default_screen.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,7 +13,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with WindowListener {
+class _HomePageState extends State<HomePage> {
   List<NavigationPaneItem> items = [
     PaneItemHeader(
       header: const Text("Projects"),
@@ -27,23 +27,6 @@ class _HomePageState extends State<HomePage> with WindowListener {
 
   /// index count of paneitems
   int _index = 0;
-
-  @override
-  void initState() {
-    windowManager.addListener(this);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    windowManager.removeListener(this);
-    super.dispose();
-  }
-
-  @override
-  void onWindowClose() {
-    windowManager.destroy();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,22 +79,23 @@ class _HomePageState extends State<HomePage> with WindowListener {
       )
     ];
 
-    return NavigationView(
-      appBar: NavigationAppBar(
-        height: 32,
-        automaticallyImplyLeading: false,
-        title: const DragToMoveArea(
-          child: Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: Text("Deep Learning Defect Sampling"),
+    return WindowBorder(
+      color: Colors.transparent,
+      width: 0.5,
+      child: NavigationView(
+        appBar: NavigationAppBar(
+          height: 32,
+          automaticallyImplyLeading: false,
+          title: MoveWindow(
+            child: const Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: Text("Deep Learning Defect Sampling"),
+            ),
           ),
-        ),
-        actions: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Padding(
-              padding: const EdgeInsetsDirectional.only(end: 8.0),
-              child: ToggleSwitch(
+          actions: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              ToggleSwitch(
                 content: const Text('Dark Mode'),
                 checked: FluentTheme.of(context).brightness.isDark,
                 onChanged: (v) {
@@ -122,37 +106,87 @@ class _HomePageState extends State<HomePage> with WindowListener {
                   }
                 },
               ),
-            ),
-            const WindowButtons(),
-          ],
+              const WindowButtons(),
+            ],
+          ),
         ),
-      ),
-      pane: NavigationPane(
-        selected: _index,
-        onChanged: (v) => setState(() {
-          _index = v;
-        }),
-        items: items,
-        footerItems: footerItems,
+        pane: NavigationPane(
+          // header: FluentTheme.of(context).brightness.isDark
+          //     ? Image.asset(
+          //         "assets/logo_white.png",
+          //         width: 80,
+          //         filterQuality: FilterQuality.high,
+          //       )
+          //     : Image.asset(
+          //         "assets/logo_black.png",
+          //         width: 80,
+          //         filterQuality: FilterQuality.high,
+          //       ),
+          header: FluentTheme.of(context).brightness.isDark
+              ? SvgPicture.asset(
+                  "assets/logo_white.svg",
+                  width: 80,
+                )
+              : SvgPicture.asset(
+                  "assets/logo_black.svg",
+                  width: 80,
+                ),
+          selected: _index,
+          onChanged: (v) => setState(() {
+            _index = v;
+          }),
+          items: items,
+          footerItems: footerItems,
+        ),
       ),
     );
   }
 }
 
-class WindowButtons extends StatelessWidget {
+final buttonColors = WindowButtonColors(
+    iconNormal: const Color(0xFF805306),
+    mouseOver: const Color(0xFFF6A00C),
+    mouseDown: const Color(0xFF805306),
+    iconMouseOver: const Color(0xFF805306),
+    iconMouseDown: const Color(0xFFFFD500));
+
+final closeButtonColors = WindowButtonColors(
+    mouseOver: const Color(0xFFD32F2F),
+    mouseDown: const Color(0xFFB71C1C),
+    iconNormal: const Color(0xFF805306),
+    iconMouseOver: Colors.white);
+
+class WindowButtons extends StatefulWidget {
   const WindowButtons({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final FluentThemeData theme = FluentTheme.of(context);
+  _WindowButtonsState createState() => _WindowButtonsState();
+}
 
-    return SizedBox(
-      width: 138,
-      height: 50,
-      child: WindowCaption(
-        brightness: theme.brightness,
-        backgroundColor: Colors.transparent,
-      ),
+class _WindowButtonsState extends State<WindowButtons> {
+  void maximizeOrRestore() {
+    setState(() {
+      appWindow.maximizeOrRestore();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        MinimizeWindowButton(colors: buttonColors),
+        appWindow.isMaximized
+            ? RestoreWindowButton(
+                colors: buttonColors,
+                onPressed: maximizeOrRestore,
+              )
+            : MaximizeWindowButton(
+                colors: buttonColors,
+                onPressed: maximizeOrRestore,
+              ),
+        CloseWindowButton(colors: closeButtonColors),
+      ],
     );
   }
 }
