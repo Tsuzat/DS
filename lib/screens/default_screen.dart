@@ -81,7 +81,7 @@ class _DefaultScreenState extends State<DefaultScreen> {
             (e) => ListTile(
               title: Image.file(e),
               onPressed: () {
-                List<List<int>> matrix = img2mat(e);
+                List<List<double>> matrix = img2mat(e);
               },
             ),
           ),
