@@ -6,4 +6,4 @@ For now, we are using `Singular Value Decomposition (SVD)` to extract the featur
 
 ## Installation
 
-You can download the `.zip` file from releases. Currently, the project is under development and is not ready for production, so you may to face some bugs. Which are recommended to be reported in the issues section.
+You can download the [`installer`](https://github.com/Tsuzat/DLDS/releases/download/v.0.0.1-alpha/dlds_setup.exe) or `dlds.zip` file from [releases](https://github.com/Tsuzat/DLDS/releases). Currently, the project is under development and is not ready for production, so you may to face some bugs. Which are recommended to be reported in the issues section.
