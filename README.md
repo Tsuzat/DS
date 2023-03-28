@@ -1,16 +1,9 @@
-# dlds
+# DLDS
 
-A new Flutter project.
+Deep Learning Defect Sampling (DLDS) is a university project. This project is an attempt to detect the surface defects on a steel strip from it's image.
 
-## Getting Started
+For now, we are using `Singular Value Decomposition (SVD)` to extract the features from the image. The **left singular vectors** and **right singluar vector** are used to produce the left and right projections of the image. The projections are used to determine the potential defects in the image.
 
-This project is a starting point for a Flutter application.
+## Installation
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+You can download the `.zip` file from releases. Currently, the project is under development and is not ready for production, so you may to face some bugs. Which are recommended to be reported in the issues section.
