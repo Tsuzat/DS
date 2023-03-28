@@ -203,7 +203,6 @@ class _DefaultScreenState extends State<DefaultScreen> {
                           ],
                         ),
                       );
-                      setState(() {});
                     },
                   );
                 }
