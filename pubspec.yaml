@@ -42,6 +42,8 @@ dependencies:
   image: ^4.0.15
   scidart: ^0.0.2-dev.12
   syncfusion_flutter_charts: ^20.4.54
+  dio: ^5.1.0
+  process_run: ^0.12.5+2
 
 dev_dependencies:
   flutter_test:

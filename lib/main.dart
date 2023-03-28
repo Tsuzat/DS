@@ -1,12 +1,24 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:dlds/backend/server.dart';
 import 'package:dlds/screens/home_page.dart';
 import 'package:dlds/theme.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart' as flutter_acrylic;
 import 'package:system_theme/system_theme.dart';
 import 'package:provider/provider.dart';
+// import 'package:process_run/cmd_run.dart';
+import 'package:process_run/shell_run.dart';
+
+final shell = Shell();
 
 void main() async {
+// Run the command
+  // ProcessCmd cmd = ProcessCmd(
+  //     "C:\\Users\\aloks\\Codes\\pycodes\\tsuzat\\output\\main\\main.exe", [],
+  //     runInShell: false);
+  // await runCmd(cmd);
+
+  // run backend
   WidgetsFlutterBinding.ensureInitialized();
 
   await SystemTheme.accentColor.load();
@@ -25,6 +37,18 @@ void main() async {
   });
 
   runApp(const MyApp());
+
+  /// get present working directory
+
+  String pwd = shell.path;
+  String backendExe = "$pwd\\backend_compiled\\dlds_backend.exe";
+
+  /// Checking if Backend is running using [checkBackend] function
+  /// If backend is not running then run the backend
+
+  if (!await checkBackend()) {
+    await shell.run(backendExe);
+  }
 }
 
 class MyApp extends StatelessWidget {
