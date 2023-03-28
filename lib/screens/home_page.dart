@@ -1,4 +1,5 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:dlds/main.dart';
 import 'package:dlds/screens/settings.dart';
 import 'package:dlds/theme.dart';
 import 'package:fluent_ui/fluent_ui.dart';
@@ -143,24 +144,11 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-final buttonColors = WindowButtonColors(
-    iconNormal: const Color(0xFF805306),
-    mouseOver: const Color(0xFFF6A00C),
-    mouseDown: const Color(0xFF805306),
-    iconMouseOver: const Color(0xFF805306),
-    iconMouseDown: const Color(0xFFFFD500));
-
-final closeButtonColors = WindowButtonColors(
-    mouseOver: const Color(0xFFD32F2F),
-    mouseDown: const Color(0xFFB71C1C),
-    iconNormal: const Color(0xFF805306),
-    iconMouseOver: Colors.white);
-
 class WindowButtons extends StatefulWidget {
-  const WindowButtons({Key? key}) : super(key: key);
+  const WindowButtons({super.key});
 
   @override
-  _WindowButtonsState createState() => _WindowButtonsState();
+  State<WindowButtons> createState() => _WindowButtonsState();
 }
 
 class _WindowButtonsState extends State<WindowButtons> {
@@ -172,6 +160,20 @@ class _WindowButtonsState extends State<WindowButtons> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDart = FluentTheme.of(context).brightness.isDark;
+    final buttonColors = WindowButtonColors(
+      iconNormal: isDart ? Colors.white : Colors.black,
+      mouseOver: const Color.fromRGBO(150, 150, 150, 0.5),
+      mouseDown: const Color.fromRGBO(150, 150, 150, 0.3),
+      iconMouseOver: isDart ? Colors.white : Colors.black,
+      iconMouseDown: isDart ? Colors.white : Colors.black,
+    );
+
+    final closeButtonColors = WindowButtonColors(
+        iconNormal: isDart ? Colors.white : Colors.black,
+        mouseOver: const Color(0xFFD32F2F),
+        mouseDown: const Color(0xFFB71C1C),
+        iconMouseOver: Colors.white);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -185,7 +187,13 @@ class _WindowButtonsState extends State<WindowButtons> {
                 colors: buttonColors,
                 onPressed: maximizeOrRestore,
               ),
-        CloseWindowButton(colors: closeButtonColors),
+        CloseWindowButton(
+          colors: closeButtonColors,
+          onPressed: () {
+            shell.kill();
+            appWindow.close();
+          },
+        ),
       ],
     );
   }
