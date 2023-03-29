@@ -119,14 +119,14 @@ class _DefaultScreenState extends State<DefaultScreen> {
                   img.Image? rawImg =
                       img.decodeImage(imgFile.readAsBytesSync());
 
-                  // rawImg = img.decodeJpg(img.encodeJpg(rawImg!));
+                  rawImg = img.decodeJpg(img.encodeJpg(rawImg!));
 
                   final newImg = img.drawRect(
                     rawImg!,
-                    x1: leftMaxIndex - 10,
-                    x2: leftMaxIndex + 10,
-                    y1: rightMaxIndex - 10,
-                    y2: rightMaxIndex + 10,
+                    x1: rightMaxIndex - 10,
+                    x2: rightMaxIndex + 10,
+                    y1: leftMaxIndex - 10,
+                    y2: leftMaxIndex + 10,
                     color: img.ColorRgba8(255, 0, 0, 255),
                   );
 
