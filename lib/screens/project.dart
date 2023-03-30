@@ -1,7 +1,9 @@
 import 'dart:io';
-import 'dart:math';
 
+import 'package:dlds/model/dlds_image.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class ProjectPage extends StatefulWidget {
   const ProjectPage({super.key});
@@ -11,14 +13,25 @@ class ProjectPage extends StatefulWidget {
 }
 
 class _ProjectPageState extends State<ProjectPage> {
-  List<String> images = List.generate(
-      50,
-      (index) =>
-          "C:\\Users\\aloks\\Downloads\\NEU Metal Surface Defects Data\\valid\\Crazing\\Cr_11.bmp");
-
+  List<DLDSImage> images = [];
   List<int> selectedIndex = [];
 
   final spacer = const SizedBox(width: 20);
+
+  void addNewImages() async {
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(allowMultiple: true);
+
+    if (result != null) {
+      List<String?> paths = result.paths.toList();
+      for (int i = 0; i < paths.length; i++) {
+        images.add(await processDLDSImage(File(paths[i]!)));
+      }
+      setState(() {});
+    } else {
+      return;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +46,7 @@ class _ProjectPageState extends State<ProjectPage> {
           icon: const Icon(FluentIcons.add),
           label: const Text('New'),
           onPressed: () {
-            // getImages();
+            addNewImages();
           },
         ),
       ),
@@ -63,7 +76,7 @@ class _ProjectPageState extends State<ProjectPage> {
               );
             } else {
               // Delete the selectedIndex
-              List<String> temp = [];
+              List<DLDSImage> temp = [];
               for (int i = 0; i < images.length; i++) {
                 if (selectedIndex.contains(i)) {
                   continue;
@@ -105,7 +118,7 @@ class _ProjectPageState extends State<ProjectPage> {
       child: ScaffoldPage(
         header: PageHeader(
           title: const Text(
-            "Image Picker",
+            "Project Name",
           ),
           commandBar: CommandBar(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -144,21 +157,80 @@ class _ProjectPageState extends State<ProjectPage> {
                         },
                       ),
                       spacer,
-                      Image.file(
-                        File(images[index]),
+                      Image(
+                        image: images[index].originaImage.image,
                         width: 200,
                         height: 200,
                       ),
                       spacer,
-                      Image.file(
-                        File(images[index]),
+                      Image(
+                        image: images[index].processedImage.image,
                         width: 200,
                         height: 200,
                       ),
                     ],
                   ),
-                  subtitle: Text(images[index]),
-                  onPressed: () {},
+                  subtitle: Text(images[index].imgPath),
+                  onPressed: () async {
+                    await showDialog(
+                      context: context,
+                      builder: (context) => ContentDialog(
+                        constraints: const BoxConstraints.expand(),
+                        title: const Text('Graph of Projections'),
+                        content: Row(
+                          children: [
+                            Expanded(
+                              child: SfCartesianChart(
+                                tooltipBehavior: TooltipBehavior(enable: true),
+                                primaryXAxis: NumericAxis(
+                                  title: AxisTitle(text: 'Index'),
+                                ),
+                                title: ChartTitle(text: 'Left Projection'),
+                                series: [
+                                  LineSeries(
+                                      dataSource: images[index].leftProjection,
+                                      xValueMapper: (_, idx) => idx,
+                                      yValueMapper: (_, idx) =>
+                                          images[index].leftProjection[idx],
+                                      name: 'Left Projection'),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: SfCartesianChart(
+                                tooltipBehavior: TooltipBehavior(enable: true),
+                                primaryXAxis: NumericAxis(
+                                  title: AxisTitle(text: 'Index'),
+                                ),
+                                title: ChartTitle(text: 'Right Projection'),
+                                series: [
+                                  LineSeries(
+                                      dataSource: images[index].rightProjection,
+                                      xValueMapper: (_, idx) => idx,
+                                      yValueMapper: (_, idx) =>
+                                          images[index].rightProjection[idx],
+                                      name: 'Left Projection'),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        actions: [
+                          // Button(
+                          //   child: const Text('Delete'),
+                          //   onPressed: () {
+                          //     Navigator.pop(context, 'User deleted file');
+                          //     // Delete file here
+                          //   },
+                          // ),
+                          FilledButton(
+                            child: const Text('Close Pop Up'),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 );
               },
             );
