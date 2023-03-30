@@ -1,5 +1,6 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:dlds/main.dart';
+import 'package:dlds/screens/project.dart';
 import 'package:dlds/screens/settings.dart';
 import 'package:dlds/theme.dart';
 import 'package:fluent_ui/fluent_ui.dart';
@@ -22,7 +23,8 @@ class _HomePageState extends State<HomePage> {
     PaneItem(
       title: const Text("Home"),
       icon: const Icon(FluentIcons.home),
-      body: const DefaultScreen(),
+      // body: const DefaultScreen(),
+      body: const ProjectPage(),
     ),
   ];
 
@@ -62,7 +64,8 @@ class _HomePageState extends State<HomePage> {
                       PaneItem temp = PaneItem(
                         title: Text(projectName),
                         icon: const Icon(FluentIcons.new_folder),
-                        body: const DefaultScreen(),
+                        // body: const DefaultScreen(),
+                        body: const ProjectPage(),
                       );
                       items.add(temp);
                       setState(() {});
