@@ -12,12 +12,6 @@ import 'package:process_run/shell_run.dart';
 final shell = Shell();
 
 void main() async {
-// Run the command
-  // ProcessCmd cmd = ProcessCmd(
-  //     "C:\\Users\\aloks\\Codes\\pycodes\\tsuzat\\output\\main\\main.exe", [],
-  //     runInShell: false);
-  // await runCmd(cmd);
-
   // run backend
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -28,7 +22,7 @@ void main() async {
 
   doWhenWindowReady(() {
     final win = appWindow;
-    const initialSize = Size(1000, 600);
+    const initialSize = Size(1050, 600);
     win.minSize = initialSize;
     win.size = initialSize;
     win.alignment = Alignment.center;
