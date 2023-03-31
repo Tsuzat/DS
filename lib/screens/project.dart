@@ -213,7 +213,7 @@ class _ProjectPageState extends State<ProjectPage> {
                                       xValueMapper: (_, idx) => idx,
                                       yValueMapper: (_, idx) =>
                                           images[index].rightProjection[idx],
-                                      name: 'Left Projection'),
+                                      name: 'Right Projection'),
                                 ],
                               ),
                             ),
