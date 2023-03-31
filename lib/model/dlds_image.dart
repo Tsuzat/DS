@@ -56,7 +56,7 @@ Future<DLDSImage> processDLDSImage(File image) async {
   List<List<double>> img = List.generate(
       leftProjection.length, (index) => List.filled(rightProjection.length, 0));
 
-  // Iterate for each value of leftPeaks as rows in Matrix
+  // Iterate for each value of leftPeaks as Columns in Matrix
   for (int i = 0; i < leftPeaks.length; i++) {
     // We will check all rows near by leftPeaks[i] whose values are greater than tolerance
     int leftPointer = leftPeaks[i];
@@ -66,7 +66,7 @@ Future<DLDSImage> processDLDSImage(File image) async {
     while (leftPointer >= 0 && leftProjectionAbs[leftPointer] > leftAvg) {
       // increase the value of each element in row by 1 in matrix
       for (int i = 0; i < img[0].length; i++) {
-        img[leftPointer][i] += 1;
+        img[i][leftPointer] += 1;
       }
       --leftPointer;
     }
@@ -74,26 +74,26 @@ Future<DLDSImage> processDLDSImage(File image) async {
     while (rightPointer < leftPeaks.length &&
         leftProjection[rightPointer] > leftAvg) {
       for (int i = 0; i < img[0].length; i++) {
-        img[rightPointer][i] += 1;
+        img[i][rightPointer] += 1;
       }
       ++rightPointer;
     }
   }
 
-  // Iterate for each value of rightPeaks as columns in Matrix
+  // Iterate for each value of rightPeaks as rows in Matrix
   for (int i = 0; i < rightPeaks.length; i++) {
     int leftPointer = rightPeaks[i];
     int rightPointer = rightPeaks[i] + 1;
     while (leftPointer >= 0 && rightProjectionAbs[leftPointer] > rightAvg) {
       for (int i = 0; i < img.length; i++) {
-        img[i][leftPointer] += 1;
+        img[leftPointer][i] += 1;
       }
       --leftPointer;
     }
     while (rightPointer < rightPeaks.length &&
         rightProjection[rightPointer] > rightAvg) {
       for (int i = 0; i < img.length; i++) {
-        img[i][rightPointer] += 1;
+        img[rightPointer][i] += 1;
       }
       ++rightPointer;
     }
@@ -105,7 +105,7 @@ Future<DLDSImage> processDLDSImage(File image) async {
   rawImg = nimg.decodeJpg(nimg.encodeJpg(rawImg!));
   for (int i = 0; i < img.length; i++) {
     for (int j = 0; j < img[0].length; j++) {
-      if (img[i][j] > 1) {
+      if (img[i][j] > 2) {
         rawImg = nimg.drawPixel(
           rawImg!,
           j,
