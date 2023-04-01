@@ -57,7 +57,7 @@ Future<DLDSImage> processDLDSImage(File image) async {
       leftProjection.length, (index) => List.filled(rightProjection.length, 0));
 
   // Set of visited values
-  Set<int> colVisited = {};
+  List<bool> colVisited = List.generate(img[0].length, (index) => false);
   // Iterate for each value of leftPeaks as Columns in Matrix
   for (int val in leftPeaks) {
     // We will check all rows near by leftPeaks[i] whose values are greater than tolerance
@@ -67,11 +67,11 @@ Future<DLDSImage> processDLDSImage(File image) async {
     // it will stop is leftProjectionAbs[leftPointer] < tolerance or leftPointer < 0
     while (leftPointer >= 0 && leftProjectionAbs[leftPointer] > leftAvg) {
       // increase the value of each element in row by 1 in matrix
-      if (colVisited.contains(leftPointer)) {
+      if (colVisited[leftPointer] == true) {
         leftPointer--;
         continue;
       } else {
-        colVisited.add(leftPointer);
+        colVisited[leftPointer] = true;
         for (int i = 0; i < img[0].length; i++) {
           img[i][leftPointer] += 1;
         }
@@ -81,11 +81,11 @@ Future<DLDSImage> processDLDSImage(File image) async {
     // Do the same for rightPonter
     while (rightPointer < leftPeaks.length &&
         leftProjection[rightPointer] > leftAvg) {
-      if (colVisited.contains(rightPointer)) {
+      if (colVisited[rightPointer] == true) {
         rightPointer++;
         continue;
       } else {
-        colVisited.add(rightPointer);
+        colVisited[rightPointer] = true;
         for (int i = 0; i < img[0].length; i++) {
           img[i][rightPointer] += 1;
         }
@@ -94,17 +94,17 @@ Future<DLDSImage> processDLDSImage(File image) async {
     }
   }
 
-  Set<int> rowVisited = {};
+  List<bool> rowVisited = List.generate(img.length, (index) => false);
   // Iterate for each value of rightPeaks as rows in Matrix
   for (int val in rightPeaks) {
     int leftPointer = val;
     int rightPointer = val + 1;
     while (leftPointer >= 0 && rightProjectionAbs[leftPointer] > rightAvg) {
-      if (rowVisited.contains(leftPointer)) {
+      if (rowVisited[leftPointer] == true) {
         leftPointer--;
         continue;
       } else {
-        rowVisited.add(leftPointer);
+        rowVisited[leftPointer] = true;
         for (int i = 0; i < img.length; i++) {
           img[leftPointer][i] += 1;
         }
@@ -113,11 +113,11 @@ Future<DLDSImage> processDLDSImage(File image) async {
     }
     while (rightPointer < rightPeaks.length &&
         rightProjection[rightPointer] > rightAvg) {
-      if (rowVisited.contains(rightPointer)) {
+      if (rowVisited[rightPointer] == true) {
         rightPointer++;
         continue;
       } else {
-        rowVisited.add(rightPointer);
+        rowVisited[rightPointer] = true;
         for (int i = 0; i < img.length; i++) {
           img[rightPointer][i] += 1;
         }
@@ -126,21 +126,13 @@ Future<DLDSImage> processDLDSImage(File image) async {
     }
   }
 
-  // for (final arr in img) {
-  //   String tmp = "";
-  //   for (final el in arr) {
-  //     tmp += "${el.toInt()} ";
-  //   }
-  //   debugPrint('$tmp\n');
-  // }
-
   // Image Processing Based on img matrix
   // Load the image
   nimg.Image? rawImg = nimg.decodeImage(image.readAsBytesSync());
   rawImg = nimg.decodeJpg(nimg.encodeJpg(rawImg!));
   for (int i = 0; i < img.length; i++) {
     for (int j = 0; j < img[0].length; j++) {
-      if (img[i][j] >= 2) {
+      if (img[i][j] > 1) {
         rawImg = nimg.drawPixel(
           rawImg!,
           j,
