@@ -19,8 +19,8 @@ class _ProjectPageState extends State<ProjectPage> {
   final spacer = const SizedBox(width: 20);
 
   void addNewImages() async {
-    FilePickerResult? result =
-        await FilePicker.platform.pickFiles(allowMultiple: true);
+    FilePickerResult? result = await FilePicker.platform
+        .pickFiles(allowMultiple: true, type: FileType.image);
 
     if (result != null) {
       List<String?> paths = result.paths.toList();
