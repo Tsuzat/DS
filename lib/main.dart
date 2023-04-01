@@ -6,7 +6,6 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart' as flutter_acrylic;
 import 'package:system_theme/system_theme.dart';
 import 'package:provider/provider.dart';
-// import 'package:process_run/cmd_run.dart';
 import 'package:process_run/shell_run.dart';
 
 final shell = Shell();
