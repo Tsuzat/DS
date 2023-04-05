@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:dlds/backend/server.dart';
 import 'package:dlds/screens/home_page.dart';
@@ -9,6 +11,8 @@ import 'package:provider/provider.dart';
 import 'package:process_run/shell_run.dart';
 
 final shell = Shell();
+
+final appDir = Directory.current.absolute.path;
 
 void main() async {
   // run backend
@@ -29,8 +33,6 @@ void main() async {
     win.show();
   });
 
-  runApp(const MyApp());
-
   /// get present working directory
 
   String pwd = shell.path;
@@ -38,10 +40,10 @@ void main() async {
 
   /// Checking if Backend is running using [checkBackend] function
   /// If backend is not running then run the backend
-
   if (!await checkBackend()) {
-    await shell.run(backendExe);
+    shell.run(backendExe);
   }
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
