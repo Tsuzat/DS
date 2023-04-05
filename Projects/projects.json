@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Home",
+    "icon": 0,
+    "project_file": "home.json"
+  },
+  {
+    "title": "List",
+    "icon": 1,
+    "project_file": "home.json"
+  },
+  {
+    "title": "New Item",
+    "icon": 2,
+    "project_file": "home.json"
+  }
+]
