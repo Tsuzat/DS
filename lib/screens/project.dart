@@ -1,18 +1,24 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:dlds/main.dart';
 import 'package:dlds/model/dlds_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class ProjectPage extends StatefulWidget {
-  const ProjectPage({super.key});
+  final String projectFileName;
+  const ProjectPage({super.key, required this.projectFileName});
 
   @override
   State<ProjectPage> createState() => _ProjectPageState();
 }
 
 class _ProjectPageState extends State<ProjectPage> {
+  late File projectFile;
+  late List<String> projectImages;
+  late String projectFilePath;
   List<DLDSImage> images = [];
   List<int> selectedIndex = [];
 
@@ -26,11 +32,53 @@ class _ProjectPageState extends State<ProjectPage> {
       List<String?> paths = result.paths.toList();
       for (int i = 0; i < paths.length; i++) {
         images.add(await processDLDSImage(File(paths[i]!)));
+        projectImages.add(paths[i]!);
       }
+      // Update Project Images and repaint the widget
+      updateJsonFile();
       setState(() {});
     } else {
       return;
     }
+  }
+
+  void loadProject() async {
+    projectFilePath = "$appDir\\Projects\\${widget.projectFileName}";
+    projectImages = [];
+    // read json file path
+    projectFile = File(projectFilePath);
+    // If projectFile does not exists then create one
+    if (!await projectFile.exists()) {
+      // Create the file and dump empty list in it
+      await projectFile.create();
+      await projectFile.writeAsString(jsonEncode([]));
+    }
+    // Load the project
+    // read the file and decode into json
+    String tmp = await projectFile.readAsString();
+    var data = jsonDecode(tmp);
+
+    for (int i = 0; i < data.length; i++) {
+      projectImages.add(data[i].toString());
+    }
+
+    // Add the loaded image paths to `List<DLDSImage> images`
+    for (String imgPath in projectImages) {
+      images.add(await processDLDSImage(File(imgPath)));
+    }
+
+    // Re-paint the widget after loading add files
+    setState(() {});
+  }
+
+  void updateJsonFile() async {
+    await projectFile.writeAsString(jsonEncode(projectImages));
+  }
+
+  @override
+  void initState() {
+    loadProject();
+    super.initState();
   }
 
   @override
@@ -58,7 +106,7 @@ class _ProjectPageState extends State<ProjectPage> {
         wrappedItem: CommandBarButton(
           icon: const Icon(FluentIcons.delete),
           label: const Text('Delete'),
-          onPressed: () {
+          onPressed: () async {
             // if selectedIndex is empty give a info message
             if (selectedIndex.isEmpty) {
               displayInfoBar(
@@ -75,14 +123,41 @@ class _ProjectPageState extends State<ProjectPage> {
                 },
               );
             } else {
+              // Before deleting the files ask for confirmation
+              bool? confirmDelete = await showDialog<bool>(
+                context: context,
+                builder: (context) => ContentDialog(
+                  title: const Text('Delete files permanently?'),
+                  content: const Text(
+                    'If you delete files, you won\'t be able to recover it. Do you want to delete it?',
+                  ),
+                  actions: [
+                    Button(
+                      child: const Text('Delete'),
+                      onPressed: () {
+                        Navigator.pop(context, true);
+                      },
+                    ),
+                    FilledButton(
+                      child: const Text('Cancel'),
+                      onPressed: () => Navigator.pop(context, false),
+                    ),
+                  ],
+                ),
+              );
+              // if user cancels delete, return
+              if (confirmDelete! == false) return;
               // Delete the selectedIndex
               List<DLDSImage> temp = [];
+              List<String> tmpImages = [];
               for (int i = 0; i < images.length; i++) {
                 if (selectedIndex.contains(i)) {
                   continue;
                 }
                 temp.add(images[i]);
+                tmpImages.add(images[i].imgPath);
               }
+              // ignore: use_build_context_synchronously
               displayInfoBar(
                 context,
                 builder: (context, close) {
@@ -98,6 +173,8 @@ class _ProjectPageState extends State<ProjectPage> {
                 },
               );
               images = temp;
+              projectImages = tmpImages;
+              updateJsonFile();
               selectedIndex = [];
               setState(() {});
             }
@@ -176,57 +253,109 @@ class _ProjectPageState extends State<ProjectPage> {
                   ),
                   subtitle: Text(images[index].imgPath),
                   onPressed: () async {
+                    const smallSpace = SizedBox(height: 20);
                     await showDialog(
                       context: context,
                       builder: (context) => ContentDialog(
-                        constraints: const BoxConstraints.expand(),
-                        title: const Text('Graph of Projections'),
-                        content: Row(
-                          children: [
-                            Expanded(
-                              child: SfCartesianChart(
-                                tooltipBehavior: TooltipBehavior(enable: true),
-                                primaryXAxis: NumericAxis(
-                                  title: AxisTitle(text: 'Index'),
-                                ),
-                                title: ChartTitle(text: 'Left Projection'),
-                                series: [
-                                  LineSeries(
-                                      dataSource: images[index].leftProjection,
-                                      xValueMapper: (_, idx) => idx,
-                                      yValueMapper: (_, idx) =>
-                                          images[index].leftProjection[idx],
-                                      name: 'Left Projection'),
+                        constraints: const BoxConstraints.tightFor(),
+                        title: const Center(
+                            child:
+                                Text('Report: Defects on the Steel Surface')),
+                        content: SingleChildScrollView(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Text("Image Path: ${images[index].imgPath}"),
+                                  Text(
+                                      "Date: ${DateTime.now().toIso8601String()}")
                                 ],
                               ),
-                            ),
-                            Expanded(
-                              child: SfCartesianChart(
-                                tooltipBehavior: TooltipBehavior(enable: true),
-                                primaryXAxis: NumericAxis(
-                                  title: AxisTitle(text: 'Index'),
-                                ),
-                                title: ChartTitle(text: 'Right Projection'),
-                                series: [
-                                  LineSeries(
-                                      dataSource: images[index].rightProjection,
-                                      xValueMapper: (_, idx) => idx,
-                                      yValueMapper: (_, idx) =>
-                                          images[index].rightProjection[idx],
-                                      name: 'Right Projection'),
+                              smallSpace,
+                              Text(
+                                "Images",
+                                style: FluentTheme.of(context).typography.title,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  images[index].originaImage,
+                                  images[index].processedImage,
                                 ],
                               ),
-                            ),
-                          ],
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: const [
+                                  Text("Input Image"),
+                                  Text("Processed Image"),
+                                ],
+                              ),
+                              smallSpace,
+                              Text(
+                                "Graphs of Projection",
+                                style: FluentTheme.of(context).typography.title,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: SfCartesianChart(
+                                      borderColor:
+                                          FluentTheme.of(context).accentColor,
+                                      borderWidth: 1,
+                                      tooltipBehavior:
+                                          TooltipBehavior(enable: true),
+                                      primaryXAxis: NumericAxis(
+                                        title: AxisTitle(text: 'Index'),
+                                      ),
+                                      title:
+                                          ChartTitle(text: 'Left Projection'),
+                                      series: [
+                                        LineSeries(
+                                            dataSource:
+                                                images[index].leftProjection,
+                                            xValueMapper: (_, idx) => idx,
+                                            yValueMapper: (_, idx) =>
+                                                images[index]
+                                                    .leftProjection[idx],
+                                            name: 'Left Projection'),
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: SfCartesianChart(
+                                      borderColor:
+                                          FluentTheme.of(context).accentColor,
+                                      borderWidth: 1,
+                                      tooltipBehavior:
+                                          TooltipBehavior(enable: true),
+                                      primaryXAxis: NumericAxis(
+                                        title: AxisTitle(text: 'Index'),
+                                      ),
+                                      title:
+                                          ChartTitle(text: 'Right Projection'),
+                                      series: [
+                                        LineSeries(
+                                            dataSource:
+                                                images[index].rightProjection,
+                                            xValueMapper: (_, idx) => idx,
+                                            yValueMapper: (_, idx) =>
+                                                images[index]
+                                                    .rightProjection[idx],
+                                            name: 'Right Projection'),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                         actions: [
-                          // Button(
-                          //   child: const Text('Delete'),
-                          //   onPressed: () {
-                          //     Navigator.pop(context, 'User deleted file');
-                          //     // Delete file here
-                          //   },
-                          // ),
                           FilledButton(
                             child: const Text('Close Pop Up'),
                             onPressed: () => Navigator.pop(context),
