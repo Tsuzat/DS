@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
 
   var projectData;
 
-  String projectJsonFilePath = "Projects/projects.json";
+  final String projectJsonFilePath = "$appDir\\Projects\\projects.json";
 
   /// index count of paneitems
   int _index = 0;
@@ -53,7 +53,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   /// Function to get Projects
-  /// saved in projects.json
+  /// saved in `projects.json`
   void getPanItems() async {
     var data = await File(projectJsonFilePath).readAsString();
     projectData = jsonDecode(data);
@@ -61,7 +61,9 @@ class _HomePageState extends State<HomePage> {
       PaneItem tmp = PaneItem(
         title: Text(projectData[i]["title"]),
         icon: icons[projectData[i]["icon"]],
-        body: const ProjectPage(),
+        body: ProjectPage(
+          projectFileName: projectData[i]["project_file"],
+        ),
       );
       items.add(tmp);
     }
@@ -95,20 +97,23 @@ class _HomePageState extends State<HomePage> {
             },
           );
           if (data != null) {
+            // Add this to the project.json
+            Map<String, dynamic> tmp = {
+              "title": data["title"],
+              "icon": icons.indexOf(data["icon"]),
+              "project_file": "${data['title']}.json",
+            };
+            projectData.add(tmp);
+            saveIntoJson();
             items.add(
               PaneItem(
                 title: Text(data["title"]),
                 icon: data["icon"],
-                body: const ProjectPage(),
+                body: ProjectPage(
+                  projectFileName: "${data['title']}.json",
+                ),
               ),
             );
-            // Add this to the project.json too
-            Map<String, dynamic> tmp = {
-              "title": data["title"],
-              "icon": icons.indexOf(data["icon"])
-            };
-            projectData.add(tmp);
-            saveIntoJson();
           }
           setState(() {});
         },
