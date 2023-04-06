@@ -5,6 +5,7 @@ import 'package:dlds/main.dart';
 import 'package:dlds/model/dlds_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class ProjectPage extends StatefulWidget {
@@ -253,115 +254,9 @@ class _ProjectPageState extends State<ProjectPage> {
                   ),
                   subtitle: Text(images[index].imgPath),
                   onPressed: () async {
-                    const smallSpace = SizedBox(height: 20);
                     await showDialog(
                       context: context,
-                      builder: (context) => ContentDialog(
-                        constraints: const BoxConstraints.tightFor(),
-                        title: const Center(
-                            child:
-                                Text('Report: Defects on the Steel Surface')),
-                        content: SingleChildScrollView(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  Text("Image Path: ${images[index].imgPath}"),
-                                  Text(
-                                      "Date: ${DateTime.now().toIso8601String()}")
-                                ],
-                              ),
-                              smallSpace,
-                              Text(
-                                "Images",
-                                style: FluentTheme.of(context).typography.title,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  images[index].originaImage,
-                                  images[index].processedImage,
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: const [
-                                  Text("Input Image"),
-                                  Text("Processed Image"),
-                                ],
-                              ),
-                              smallSpace,
-                              Text(
-                                "Graphs of Projection",
-                                style: FluentTheme.of(context).typography.title,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: SfCartesianChart(
-                                      borderColor:
-                                          FluentTheme.of(context).accentColor,
-                                      borderWidth: 1,
-                                      tooltipBehavior:
-                                          TooltipBehavior(enable: true),
-                                      primaryXAxis: NumericAxis(
-                                        title: AxisTitle(text: 'Index'),
-                                      ),
-                                      title:
-                                          ChartTitle(text: 'Left Projection'),
-                                      series: [
-                                        LineSeries(
-                                            dataSource:
-                                                images[index].leftProjection,
-                                            xValueMapper: (_, idx) => idx,
-                                            yValueMapper: (_, idx) =>
-                                                images[index]
-                                                    .leftProjection[idx],
-                                            name: 'Left Projection'),
-                                      ],
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: SfCartesianChart(
-                                      borderColor:
-                                          FluentTheme.of(context).accentColor,
-                                      borderWidth: 1,
-                                      tooltipBehavior:
-                                          TooltipBehavior(enable: true),
-                                      primaryXAxis: NumericAxis(
-                                        title: AxisTitle(text: 'Index'),
-                                      ),
-                                      title:
-                                          ChartTitle(text: 'Right Projection'),
-                                      series: [
-                                        LineSeries(
-                                            dataSource:
-                                                images[index].rightProjection,
-                                            xValueMapper: (_, idx) => idx,
-                                            yValueMapper: (_, idx) =>
-                                                images[index]
-                                                    .rightProjection[idx],
-                                            name: 'Right Projection'),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        actions: [
-                          FilledButton(
-                            child: const Text('Close Pop Up'),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                        ],
-                      ),
+                      builder: (context) => ReportPopUp(image: images[index]),
                     );
                   },
                 );
@@ -370,6 +265,241 @@ class _ProjectPageState extends State<ProjectPage> {
           },
         ),
       ),
+    );
+  }
+}
+
+class ReportPopUp extends StatefulWidget {
+  const ReportPopUp({
+    super.key,
+    required this.image,
+  });
+
+  final DLDSImage image;
+
+  @override
+  State<ReportPopUp> createState() => _ReportPopUpState();
+}
+
+class _ReportPopUpState extends State<ReportPopUp> {
+  final smallSpace = const SizedBox(height: 20);
+  bool showGraph = true;
+  bool showPeaks = true;
+  bool showPeaksOnGraph = true;
+  @override
+  Widget build(BuildContext context) {
+    final horizonalLine = Container(
+      height: 1,
+      margin: const EdgeInsets.all(12),
+      width: MediaQuery.of(context).size.width,
+      color: const Color.fromARGB(255, 109, 109, 109),
+    );
+    var datetime = DateTime.now();
+    String date = datetime
+        .toIso8601String()
+        .substring(0, 10)
+        .split("-")
+        .reversed
+        .join("-");
+    return ContentDialog(
+      constraints: const BoxConstraints.tightFor(),
+      title: const Center(
+        child: Text('Report: Defects on the Steel Surface (Preview)'),
+      ),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text("Image Path: ${widget.image.imgPath}"),
+                Text("Date: $date")
+              ],
+            ),
+            smallSpace,
+            Text(
+              "Images",
+              style: FluentTheme.of(context).typography.title,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Column(
+                  children: [
+                    widget.image.originaImage,
+                    const Text("Input Image"),
+                  ],
+                ),
+                FluentTheme.of(context).brightness.isDark
+                    ? SvgPicture.asset("assets/arrow_white.svg")
+                    : SvgPicture.asset("assets/arrow_black.svg"),
+                Column(
+                  children: [
+                    widget.image.processedImage,
+                    const Text("Processed Output Image"),
+                  ],
+                ),
+              ],
+            ),
+            horizonalLine,
+            smallSpace,
+            if (showGraph)
+              Text(
+                "Graphs of Projection",
+                style: FluentTheme.of(context).typography.title,
+              ),
+            if (showGraph)
+              Row(
+                children: [
+                  Expanded(
+                    child: SfCartesianChart(
+                      // borderColor: FluentTheme.of(context).accentColor,
+                      // borderWidth: 1,
+                      tooltipBehavior: TooltipBehavior(enable: true),
+                      primaryXAxis: NumericAxis(
+                        title: AxisTitle(text: 'Index for Columns'),
+                      ),
+                      primaryYAxis: NumericAxis(
+                        title: AxisTitle(text: 'Values'),
+                      ),
+                      title: ChartTitle(text: 'Left Projection'),
+                      series: [
+                        LineSeries(
+                            dataSource: widget.image.leftProjection,
+                            xValueMapper: (_, idx) => idx,
+                            yValueMapper: (_, idx) =>
+                                widget.image.leftProjection[idx],
+                            name: 'Left Projection'),
+                        if (showPeaksOnGraph)
+                          LineSeries(
+                              animationDelay: 0,
+                              animationDuration: 0,
+                              enableTooltip: false,
+                              color: Colors.transparent,
+                              markerSettings: MarkerSettings(
+                                isVisible: true,
+                                color: FluentTheme.of(context).accentColor,
+                                shape: DataMarkerType.circle,
+                                borderWidth: 0,
+                              ),
+                              dataSource: widget.image.indexOfLeftPeaks,
+                              xValueMapper: (_, idx) =>
+                                  widget.image.indexOfLeftPeaks[idx],
+                              yValueMapper: (_, idx) =>
+                                  widget.image.leftProjection[
+                                      widget.image.indexOfLeftPeaks[idx]],
+                              name: 'Peaks')
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: SfCartesianChart(
+                      // borderColor: FluentTheme.of(context).accentColor,
+                      // borderWidth: 1,
+                      tooltipBehavior: TooltipBehavior(enable: true),
+                      primaryXAxis: NumericAxis(
+                        title: AxisTitle(text: 'Index for Rows'),
+                      ),
+                      primaryYAxis: NumericAxis(
+                        title: AxisTitle(text: 'Values'),
+                      ),
+                      title: ChartTitle(text: 'Right Projection'),
+                      series: [
+                        LineSeries(
+                            dataSource: widget.image.rightProjection,
+                            xValueMapper: (_, idx) => idx,
+                            yValueMapper: (_, idx) =>
+                                widget.image.rightProjection[idx],
+                            name: 'Right Projection'),
+                        if (showPeaksOnGraph)
+                          LineSeries(
+                              animationDelay: 0,
+                              animationDuration: 0,
+                              enableTooltip: false,
+                              color: Colors.transparent,
+                              markerSettings: MarkerSettings(
+                                isVisible: true,
+                                color: FluentTheme.of(context).accentColor,
+                                shape: DataMarkerType.circle,
+                                borderWidth: 0,
+                              ),
+                              dataSource: widget.image.indexOfRightPeaks,
+                              xValueMapper: (_, idx) =>
+                                  widget.image.indexOfRightPeaks[idx],
+                              yValueMapper: (_, idx) =>
+                                  widget.image.rightProjection[
+                                      widget.image.indexOfRightPeaks[idx]],
+                              name: 'Peaks')
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            if (showGraph)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Graph Indications: "),
+                  const SizedBox(
+                    width: 40,
+                  ),
+                  Icon(
+                    FluentIcons.chrome_minimize,
+                    color: FluentTheme.of(context).accentColor,
+                  ),
+                  const SizedBox(width: 10),
+                  const Text("Projection Graph"),
+                  const SizedBox(width: 30),
+                  Icon(
+                    FluentIcons.circle_fill,
+                    color: FluentTheme.of(context).accentColor,
+                  ),
+                  const SizedBox(width: 10),
+                  const Text("Peak Points in Graph")
+                ],
+              ),
+            horizonalLine,
+            smallSpace,
+            Text(
+              "Peaks in the graphs",
+              style: FluentTheme.of(context).typography.title,
+            ),
+            if (showPeaks)
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: SelectableText(
+                  "Left Peaks: ${widget.image.indexOfLeftPeaks.map((e) => widget.image.leftProjection[e].toStringAsFixed(2)).toList().toString()}\n"
+                  "Right Peaks: ${widget.image.indexOfRightPeaks.map((e) => widget.image.rightProjection[e].toStringAsFixed(2)).toList().toString()}",
+                ),
+              )
+          ],
+        ),
+      ),
+      actions: [
+        RadioButton(
+            checked: showGraph,
+            content: const Text("Show Graph"),
+            onChanged: (v) => setState(() {
+                  showGraph = v;
+                })),
+        RadioButton(
+            checked: showPeaks,
+            content: const Text("Show Peaks (Values)"),
+            onChanged: (v) => setState(() {
+                  showPeaks = v;
+                })),
+        RadioButton(
+            checked: showPeaksOnGraph,
+            content: const Text("Show Peaks (On Graphs)"),
+            onChanged: (v) => setState(() {
+                  showPeaksOnGraph = v;
+                })),
+        FilledButton(
+          child: const Text('Close Pop Up'),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ],
     );
   }
 }
