@@ -20,8 +20,20 @@ class DLDSImage {
   /// Right Projection of original Image
   List<double> rightProjection;
 
-  DLDSImage(this.imgPath, this.originaImage, this.processedImage,
-      this.leftProjection, this.rightProjection);
+  /// index of Peaks in leftProjection
+  List<int> indexOfLeftPeaks;
+
+  /// index of Peaks in leftProjection
+  List<int> indexOfRightPeaks;
+
+  DLDSImage(
+      this.imgPath,
+      this.originaImage,
+      this.processedImage,
+      this.leftProjection,
+      this.rightProjection,
+      this.indexOfLeftPeaks,
+      this.indexOfRightPeaks);
 }
 
 //! TODO : The Logic is not working as expected. Need to debug the code
@@ -146,7 +158,7 @@ Future<DLDSImage> processDLDSImage(File image) async {
 
   Image processedImage = Image.memory(nimg.encodeJpg(rawImg!));
   return DLDSImage(image.path, Image.file(image), processedImage,
-      leftProjection, rightProjection);
+      leftProjection, rightProjection, leftPeaks, rightPeaks);
 }
 
 /// Returns the average of values of all elements in the list
