@@ -27,17 +27,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<NavigationPaneItem> items = [
-    // PaneItemHeader(
-    //   header: const Text("Projects"),
-    // ),
-    // PaneItem(
-    //   title: const Text("Home"),
-    //   icon: const Icon(FluentIcons.home),
-    //   // body: const DefaultScreen(),
-    //   body: const ProjectPage(),
-    // ),
-  ];
+  List<NavigationPaneItem> items = [];
 
   var projectData;
 
