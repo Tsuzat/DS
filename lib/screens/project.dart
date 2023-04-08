@@ -323,7 +323,7 @@ class _ReportPopUpState extends State<ReportPopUp> {
               children: [
                 const PageHeader(
                   title: Text(
-                    'Report: Defects on the Steel Surface (Preview)',
+                    'Report: Defects on the Steel Surface',
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -514,59 +514,69 @@ class _ReportPopUpState extends State<ReportPopUp> {
             onChanged: (v) => setState(() {
                   showPeaksOnGraph = v;
                 })),
+        DropDownButton(
+          title: const Text("Save as"),
+          items: [
+            MenuFlyoutItem(
+              text: const Text("Image with backgound"),
+              onPressed: () async {
+                // get widget as image
+                Uint8List pngBytes = await widgetToImage(
+                  globalKey: globalKey,
+                  isDark: FluentTheme.of(context).brightness.isDark,
+                  withBG: true,
+                  pixelRatio: 3,
+                );
+
+                // ignore: use_build_context_synchronously
+                saveByteDataIntoFile(
+                    fileName: "${fileName}_result.png",
+                    context: context,
+                    dataInBytes: pngBytes,
+                    fileType: FileType.image,
+                    allowedExtensions: ["png"]);
+              },
+            ),
+            MenuFlyoutItem(
+              text: const Text("transparent image"),
+              onPressed: () async {
+                // get widget as image
+                Uint8List pngBytes = await widgetToImage(
+                  globalKey: globalKey,
+                  isDark: FluentTheme.of(context).brightness.isDark,
+                  withBG: false,
+                  pixelRatio: 3,
+                );
+
+                // ignore: use_build_context_synchronously
+                saveByteDataIntoFile(
+                    fileName: "${fileName}_result.png",
+                    context: context,
+                    dataInBytes: pngBytes,
+                    fileType: FileType.image,
+                    allowedExtensions: ["png"]);
+              },
+            ),
+          ],
+        ),
         Button(
           child: const Text("Save as Image"),
           onPressed: () async {
             // get widget as image
             Uint8List pngBytes = await widgetToImage(
-                globalKey: globalKey, withBG: true, isDark: true);
-
-            // Get the location of file
-            String? imgLocation = await FilePicker.platform.saveFile(
-              dialogTitle: "Save To Image",
-              fileName: "${fileName}_result.png",
-              type: FileType.image,
-              allowedExtensions: ["png"],
+              globalKey: globalKey,
+              isDark: FluentTheme.of(context).brightness.isDark,
+              withBG: false,
+              pixelRatio: 3,
             );
 
-            if (imgLocation == null || imgLocation.isEmpty) {
-              // ignore: use_build_context_synchronously
-              displayInfoBar(
-                context,
-                builder: (context, close) {
-                  return InfoBar(
-                    title: const Text('File is not saved'),
-                    content: const Text(
-                        'The Operation was cancelled by user/system'),
-                    action: IconButton(
-                      icon: const Icon(FluentIcons.clear),
-                      onPressed: close,
-                    ),
-                    severity: InfoBarSeverity.warning,
-                  );
-                },
-              );
-              return;
-            }
-            await File(imgLocation).writeAsBytes(pngBytes);
             // ignore: use_build_context_synchronously
-            displayInfoBar(
-              context,
-              builder: (context, _) {
-                return InfoBar(
-                  title: const Text('File saved sucessfully'),
-                  content:
-                      Text('The image has been saved on location $imgLocation'),
-                  action: Button(
-                    child: const Text("Open File"),
-                    onPressed: () async {
-                      await Process.run('explorer.exe', [imgLocation]);
-                    },
-                  ),
-                  severity: InfoBarSeverity.success,
-                );
-              },
-            );
+            saveByteDataIntoFile(
+                fileName: "${fileName}_result.png",
+                context: context,
+                dataInBytes: pngBytes,
+                fileType: FileType.image,
+                allowedExtensions: ["png"]);
           },
         ),
         FilledButton(
@@ -578,10 +588,67 @@ class _ReportPopUpState extends State<ReportPopUp> {
   }
 }
 
-/// Function to get widget as an image
+/// Function to save file with provided context and data as bytes
+void saveByteDataIntoFile(
+    {required String fileName,
+    required BuildContext context,
+    required List<int> dataInBytes,
+    FileType fileType = FileType.any,
+    List<String>? allowedExtensions}) async {
+  // Get the location of file
+  String? imgLocation = await FilePicker.platform.saveFile(
+    dialogTitle: "Save To Image",
+    fileName: fileName,
+    type: fileType,
+    allowedExtensions: allowedExtensions,
+  );
+
+  if (imgLocation == null || imgLocation.isEmpty) {
+    // ignore: use_build_context_synchronously
+    displayInfoBar(
+      context,
+      builder: (context, close) {
+        return InfoBar(
+          title: const Text('File is not saved'),
+          content: const Text('The Operation was cancelled by user/system'),
+          action: IconButton(
+            icon: const Icon(FluentIcons.clear),
+            onPressed: close,
+          ),
+          severity: InfoBarSeverity.warning,
+        );
+      },
+    );
+    return;
+  }
+  await File(imgLocation).writeAsBytes(dataInBytes);
+  // ignore: use_build_context_synchronously
+  displayInfoBar(
+    context,
+    builder: (context, _) {
+      return InfoBar(
+        title: const Text('File saved sucessfully'),
+        content: Text('The image has been saved on location $imgLocation'),
+        action: Button(
+          child: const Text("Open File"),
+          onPressed: () async {
+            await Process.run('explorer.exe', [imgLocation]);
+          },
+        ),
+        severity: InfoBarSeverity.success,
+      );
+    },
+  );
+}
+
+/// Function to get widget as an image. It takes following options
+/// - globalKey [required] : `GlobalKey()` that has been passed as RepaintBoundary Key
+/// - withBG: Weather you want to have image an backgound or not, default is `true`
+/// - pixelRation: Default is 1 but can be increased for better image quality
+/// - isDark [required]: to check if theme of the app is dark or light
 Future<Uint8List> widgetToImage(
     {required GlobalKey globalKey,
-    required bool withBG,
+    bool withBG = true,
     double pixelRatio = 1,
     required bool isDark}) async {
   RenderRepaintBoundary boundary =
