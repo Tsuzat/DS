@@ -577,9 +577,15 @@ class _ReportPopUpState extends State<ReportPopUp> {
                   title: const Text('File saved sucessfully'),
                   content:
                       Text('The image has been saved on location $imgLocation'),
-                  action: IconButton(
-                    icon: const Icon(FluentIcons.clear),
-                    onPressed: close,
+                  // action: IconButton(
+                  //   icon: const Icon(FluentIcons.clear),
+                  //   onPressed: close,
+                  // ),
+                  action: Button(
+                    child: const Text("Open File"),
+                    onPressed: () async {
+                      await Process.run('explorer.exe', [imgLocation]);
+                    },
                   ),
                   severity: InfoBarSeverity.success,
                 );
