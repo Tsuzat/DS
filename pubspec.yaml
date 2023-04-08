@@ -44,6 +44,7 @@ dependencies:
   syncfusion_flutter_charts: ^20.4.54
   dio: ^5.1.0
   process_run: ^0.12.5+2
+  pdf: ^3.10.1
 
 dev_dependencies:
   flutter_test:
