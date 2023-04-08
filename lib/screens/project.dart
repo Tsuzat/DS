@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
@@ -12,8 +13,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class ProjectPage extends StatefulWidget {
-  final String projectFileName;
   const ProjectPage({super.key, required this.projectFileName});
+
+  final String projectFileName;
 
   @override
   State<ProjectPage> createState() => _ProjectPageState();
@@ -198,9 +200,7 @@ class _ProjectPageState extends State<ProjectPage> {
       ),
       child: ScaffoldPage(
         header: PageHeader(
-          title: const Text(
-            "Project Name",
-          ),
+          title: Text(widget.projectFileName.replaceAll('.json', '')),
           commandBar: CommandBar(
             mainAxisAlignment: MainAxisAlignment.end,
             overflowBehavior: CommandBarOverflowBehavior.noWrap,
@@ -515,31 +515,9 @@ class _ReportPopUpState extends State<ReportPopUp> {
         Button(
           child: const Text("Save as Image"),
           onPressed: () async {
-            RenderRepaintBoundary boundary = globalKey.currentContext!
-                .findRenderObject() as RenderRepaintBoundary;
-            final ui.Image uiImage = await boundary.toImage(pixelRatio: 1);
-
-            // Add the background to image
-            final recorder = ui.PictureRecorder();
-            final canvas = Canvas(recorder);
-            final paint = Paint()
-              // ignore: use_build_context_synchronously
-              ..color = FluentTheme.of(context).brightness.isDark
-                  ? const Color(0xFF272727)
-                  : const Color(0xFFf9f9f9);
-
-            canvas.drawRect(
-                Rect.fromLTWH(
-                    0, 0, uiImage.width.toDouble(), uiImage.height.toDouble()),
-                paint);
-            canvas.drawImage(uiImage, Offset.zero, Paint());
-
-            // Convert the canvas to a PNG bytes
-            final picture = recorder.endRecording();
-            final png = await picture.toImage(uiImage.width, uiImage.height);
-            final pngByteData =
-                await png.toByteData(format: ui.ImageByteFormat.png);
-            final pngBytes = pngByteData!.buffer.asUint8List();
+            // get widget as image
+            Uint8List pngBytes = await widgetToImage(
+                globalKey: globalKey, withBG: true, isDark: true);
 
             // Get the location of file
             String? imgLocation = await FilePicker.platform.saveFile(
@@ -572,15 +550,11 @@ class _ReportPopUpState extends State<ReportPopUp> {
             // ignore: use_build_context_synchronously
             displayInfoBar(
               context,
-              builder: (context, close) {
+              builder: (context, _) {
                 return InfoBar(
                   title: const Text('File saved sucessfully'),
                   content:
                       Text('The image has been saved on location $imgLocation'),
-                  // action: IconButton(
-                  //   icon: const Icon(FluentIcons.clear),
-                  //   onPressed: close,
-                  // ),
                   action: Button(
                     child: const Text("Open File"),
                     onPressed: () async {
@@ -600,6 +574,36 @@ class _ReportPopUpState extends State<ReportPopUp> {
       ],
     );
   }
+}
+
+/// Function to get widget as an image
+Future<Uint8List> widgetToImage(
+    {required GlobalKey globalKey,
+    required bool withBG,
+    double pixelRatio = 1,
+    required bool isDark}) async {
+  RenderRepaintBoundary boundary =
+      globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+  final ui.Image uiImage = await boundary.toImage(pixelRatio: 1);
+
+  // Add the background to image
+  final recorder = ui.PictureRecorder();
+  final canvas = Canvas(recorder);
+  final paint = Paint()
+    ..color = withBG
+        ? (isDark ? const Color(0xFF272727) : const Color(0xFFf9f9f9))
+        : Colors.transparent;
+
+  canvas.drawRect(
+      Rect.fromLTWH(0, 0, uiImage.width.toDouble(), uiImage.height.toDouble()),
+      paint);
+  canvas.drawImage(uiImage, Offset.zero, Paint());
+
+  // Convert the canvas to a PNG bytes
+  final picture = recorder.endRecording();
+  final png = await picture.toImage(uiImage.width, uiImage.height);
+  final pngByteData = await png.toByteData(format: ui.ImageByteFormat.png);
+  return pngByteData!.buffer.asUint8List();
 }
 
 /// Function that gives the name of file without the extension
