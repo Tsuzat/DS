@@ -135,7 +135,9 @@ class _ProjectPageState extends State<ProjectPage> {
                 builder: (context) => ContentDialog(
                   title: const Text('Delete files permanently?'),
                   content: const Text(
-                    'If you delete files, you won\'t be able to recover it. Do you want to delete it?',
+                    'If you delete files, you won\'t be able to recover it.'
+                    'Don\'t worry, file will not be deleted from your system but just from this project.'
+                    'Do you want to delete it?',
                   ),
                   actions: [
                     Button(
