@@ -11,6 +11,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:pdf/pdf.dart';
 
 class ProjectPage extends StatefulWidget {
   const ProjectPage({super.key, required this.projectFileName});
@@ -530,7 +532,7 @@ class _ReportPopUpState extends State<ReportPopUp> {
 
                 // ignore: use_build_context_synchronously
                 saveByteDataIntoFile(
-                    fileName: "${fileName}_result.png",
+                    fileName: "${fileName}_report.png",
                     context: context,
                     dataInBytes: pngBytes,
                     fileType: FileType.image,
@@ -550,13 +552,47 @@ class _ReportPopUpState extends State<ReportPopUp> {
 
                 // ignore: use_build_context_synchronously
                 saveByteDataIntoFile(
-                    fileName: "${fileName}_result.png",
+                    fileName: "${fileName}_report.png",
                     context: context,
                     dataInBytes: pngBytes,
                     fileType: FileType.image,
                     allowedExtensions: ["png"]);
               },
             ),
+            MenuFlyoutItem(
+                text: const Text("PDF"),
+                onPressed: () async {
+                  // get widget as image
+                  Uint8List pngBytes = await widgetToImage(
+                    globalKey: globalKey,
+                    isDark: FluentTheme.of(context).brightness.isDark,
+                    withBG: true,
+                    pixelRatio: 5,
+                  );
+
+                  final pwImage = pw.MemoryImage(pngBytes);
+
+                  final document = pw.Document();
+                  document.addPage(
+                    pw.Page(
+                      pageFormat: PdfPageFormat(pwImage.width!.toDouble(),
+                          pwImage.height!.toDouble()),
+                      build: (pw.Context context) {
+                        return pw.Center(
+                          child: pw.Image(pw.MemoryImage(pngBytes)),
+                        );
+                      },
+                    ),
+                  );
+
+                  // ignore: use_build_context_synchronously
+                  saveByteDataIntoFile(
+                      fileName: "${fileName}_report.pdf",
+                      context: context,
+                      dataInBytes: await document.save(),
+                      // fileType: FileType.custom,
+                      allowedExtensions: ["pdf"]);
+                })
           ],
         ),
         Button(
@@ -572,7 +608,7 @@ class _ReportPopUpState extends State<ReportPopUp> {
 
             // ignore: use_build_context_synchronously
             saveByteDataIntoFile(
-                fileName: "${fileName}_result.png",
+                fileName: "${fileName}_report.png",
                 context: context,
                 dataInBytes: pngBytes,
                 fileType: FileType.image,
