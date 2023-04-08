@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
 
@@ -306,6 +305,7 @@ class _ReportPopUpState extends State<ReportPopUp> {
         .split("-")
         .reversed
         .join("-");
+    String fileName = extractFileName(widget.image.imgPath);
     return ContentDialog(
       constraints: const BoxConstraints.tightFor(),
       // title: const Center(
@@ -518,15 +518,33 @@ class _ReportPopUpState extends State<ReportPopUp> {
             RenderRepaintBoundary boundary = globalKey.currentContext!
                 .findRenderObject() as RenderRepaintBoundary;
             final ui.Image uiImage = await boundary.toImage(pixelRatio: 1);
-            // final ui.Image uiImage = await boundary.toImage(pixelRatio: 1);
-            ByteData? byteData =
-                await uiImage.toByteData(format: ui.ImageByteFormat.png);
-            ByteBuffer tmpByteBuffr = byteData!.buffer;
-            Uint8List pngBytes = tmpByteBuffr.asUint8List();
+
+            // Add the background to image
+            final recorder = ui.PictureRecorder();
+            final canvas = Canvas(recorder);
+            final paint = Paint()
+              // ignore: use_build_context_synchronously
+              ..color = FluentTheme.of(context).brightness.isDark
+                  ? const Color(0xFF272727)
+                  : const Color(0xFFf9f9f9);
+
+            canvas.drawRect(
+                Rect.fromLTWH(
+                    0, 0, uiImage.width.toDouble(), uiImage.height.toDouble()),
+                paint);
+            canvas.drawImage(uiImage, Offset.zero, Paint());
+
+            // Convert the canvas to a PNG bytes
+            final picture = recorder.endRecording();
+            final png = await picture.toImage(uiImage.width, uiImage.height);
+            final pngByteData =
+                await png.toByteData(format: ui.ImageByteFormat.png);
+            final pngBytes = pngByteData!.buffer.asUint8List();
+
             // Get the location of file
             String? imgLocation = await FilePicker.platform.saveFile(
               dialogTitle: "Save To Image",
-              fileName: "_result.png",
+              fileName: "${fileName}_result.png",
               type: FileType.image,
               allowedExtensions: ["png"],
             );
@@ -576,4 +594,21 @@ class _ReportPopUpState extends State<ReportPopUp> {
       ],
     );
   }
+}
+
+/// Function that gives the name of file without the extension
+String extractFileName(String filePath) {
+  // Find the last index of the path separator (\ or /)
+  int separatorIndex = filePath.lastIndexOf(Platform.pathSeparator);
+
+  // Get the substring after the separator (i.e., the file name with extension)
+  String fileName = filePath.substring(separatorIndex + 1);
+
+  // Find the last index of the dot (.) in the file name
+  int dotIndex = fileName.lastIndexOf('.');
+
+  // Get the substring before the dot (i.e., the file name without extension)
+  String imageName = fileName.substring(0, dotIndex);
+
+  return imageName;
 }
