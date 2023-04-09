@@ -191,11 +191,24 @@ class _ProjectPageState extends State<ProjectPage> {
           },
         ),
       ),
-      CommandBarButton(
-        icon: const Icon(FluentIcons.archive),
-        label: const Text('Archive'),
-        onPressed: () {},
-      ),
+      if (selectedIndex.isNotEmpty)
+        CommandBarButton(
+          icon: const Icon(FluentIcons.multi_select),
+          label: Text(selectedIndex.length == images.length
+              ? 'Unselect All'
+              : 'Select All'),
+          onPressed: () {
+            if (selectedIndex.length == images.length) {
+              selectedIndex = [];
+            } else {
+              selectedIndex = [];
+              selectedIndex.addAll(
+                List.generate(images.length, (index) => index),
+              );
+            }
+            setState(() {});
+          },
+        ),
     ];
 
     return Padding(
