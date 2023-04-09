@@ -365,7 +365,7 @@ class _ReportPopUpState extends State<ReportPopUp> {
                 smallSpace,
                 if (showGraph)
                   Text(
-                    "Graphs of Projection",
+                    "Graphs of Projections",
                     style: FluentTheme.of(context).typography.title,
                   ),
                 if (showGraph)
@@ -385,30 +385,12 @@ class _ReportPopUpState extends State<ReportPopUp> {
                           title: ChartTitle(text: 'Left Projection'),
                           series: [
                             LineSeries(
-                                dataSource: widget.image.leftProjection,
-                                xValueMapper: (_, idx) => idx,
-                                yValueMapper: (_, idx) =>
-                                    widget.image.leftProjection[idx],
-                                name: 'Left Projection'),
-                            if (showPeaksOnGraph)
-                              LineSeries(
-                                  animationDelay: 0,
-                                  animationDuration: 0,
-                                  enableTooltip: false,
-                                  color: Colors.transparent,
-                                  markerSettings: MarkerSettings(
-                                    isVisible: true,
-                                    color: FluentTheme.of(context).accentColor,
-                                    shape: DataMarkerType.circle,
-                                    borderWidth: 0,
-                                  ),
-                                  dataSource: widget.image.indexOfLeftPeaks,
-                                  xValueMapper: (_, idx) =>
-                                      widget.image.indexOfLeftPeaks[idx],
-                                  yValueMapper: (_, idx) =>
-                                      widget.image.leftProjection[
-                                          widget.image.indexOfLeftPeaks[idx]],
-                                  name: 'Peaks')
+                              dataSource: widget.image.leftProjection,
+                              xValueMapper: (_, idx) => idx,
+                              yValueMapper: (_, idx) =>
+                                  widget.image.leftProjection[idx],
+                              name: 'Left Projection',
+                            ),
                           ],
                         ),
                       ),
@@ -426,11 +408,81 @@ class _ReportPopUpState extends State<ReportPopUp> {
                           title: ChartTitle(text: 'Right Projection'),
                           series: [
                             LineSeries(
-                                dataSource: widget.image.rightProjection,
+                              dataSource: widget.image.rightProjection,
+                              xValueMapper: (_, idx) => idx,
+                              yValueMapper: (_, idx) =>
+                                  widget.image.rightProjection[idx],
+                              name: 'Right Projection',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                smallSpace,
+                if (showGraph)
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SfCartesianChart(
+                          // borderColor: FluentTheme.of(context).accentColor,
+                          // borderWidth: 1,
+                          tooltipBehavior: TooltipBehavior(enable: true),
+                          primaryXAxis: NumericAxis(
+                            title: AxisTitle(text: 'Index for Columns'),
+                          ),
+                          primaryYAxis: NumericAxis(
+                            title: AxisTitle(text: 'Values'),
+                          ),
+                          title: ChartTitle(text: 'Left Absolute Projection'),
+                          series: [
+                            LineSeries(
+                                dataSource: widget.image.leftAbsProjection,
                                 xValueMapper: (_, idx) => idx,
                                 yValueMapper: (_, idx) =>
-                                    widget.image.rightProjection[idx],
-                                name: 'Right Projection'),
+                                    widget.image.leftAbsProjection[idx],
+                                name: 'Left Absolute Projection'),
+                            if (showPeaksOnGraph)
+                              LineSeries(
+                                  animationDelay: 0,
+                                  animationDuration: 0,
+                                  enableTooltip: false,
+                                  color: Colors.transparent,
+                                  markerSettings: MarkerSettings(
+                                    isVisible: true,
+                                    color: FluentTheme.of(context).accentColor,
+                                    shape: DataMarkerType.circle,
+                                    borderWidth: 0,
+                                  ),
+                                  dataSource: widget.image.indexOfLeftPeaks,
+                                  xValueMapper: (_, idx) =>
+                                      widget.image.indexOfLeftPeaks[idx],
+                                  yValueMapper: (_, idx) =>
+                                      widget.image.leftAbsProjection[
+                                          widget.image.indexOfLeftPeaks[idx]],
+                                  name: 'Peaks')
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: SfCartesianChart(
+                          // borderColor: FluentTheme.of(context).accentColor,
+                          // borderWidth: 1,
+                          tooltipBehavior: TooltipBehavior(enable: true),
+                          primaryXAxis: NumericAxis(
+                            title: AxisTitle(text: 'Index for Rows'),
+                          ),
+                          primaryYAxis: NumericAxis(
+                            title: AxisTitle(text: 'Values'),
+                          ),
+                          title: ChartTitle(text: 'Right Absolute Projection'),
+                          series: [
+                            LineSeries(
+                                dataSource: widget.image.rightAbsProjection,
+                                xValueMapper: (_, idx) => idx,
+                                yValueMapper: (_, idx) =>
+                                    widget.image.rightAbsProjection[idx],
+                                name: 'Right Absolute Projection'),
                             if (showPeaksOnGraph)
                               LineSeries(
                                   animationDelay: 0,
@@ -447,7 +499,7 @@ class _ReportPopUpState extends State<ReportPopUp> {
                                   xValueMapper: (_, idx) =>
                                       widget.image.indexOfRightPeaks[idx],
                                   yValueMapper: (_, idx) =>
-                                      widget.image.rightProjection[
+                                      widget.image.rightAbsProjection[
                                           widget.image.indexOfRightPeaks[idx]],
                                   name: 'Peaks')
                           ],
@@ -481,17 +533,62 @@ class _ReportPopUpState extends State<ReportPopUp> {
                 horizonalLine,
                 smallSpace,
                 Text(
-                  "Peaks in the graphs",
+                  "Result",
                   style: FluentTheme.of(context).typography.title,
                 ),
                 if (showPeaks)
                   SizedBox(
                     width: MediaQuery.of(context).size.width,
-                    child: SelectableText(
-                      "Left Peaks: ${widget.image.indexOfLeftPeaks.map((e) => widget.image.leftProjection[e].toStringAsFixed(2)).toList().toString()}\n"
-                      "Right Peaks: ${widget.image.indexOfRightPeaks.map((e) => widget.image.rightProjection[e].toStringAsFixed(2)).toList().toString()}",
+                    child: SelectableText.rich(
+                      TextSpan(
+                        children: [
+                          if (showPeaks)
+                            TextSpan(
+                              text: "Left Peaks: ",
+                              style: TextStyle(
+                                color: FluentTheme.of(context).accentColor,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          if (showPeaks)
+                            TextSpan(
+                              text: widget.image.indexOfLeftPeaks
+                                  .map((e) => widget.image.leftAbsProjection[e]
+                                      .toStringAsFixed(2))
+                                  .toList()
+                                  .toString(),
+                            ),
+                          if (showPeaks)
+                            TextSpan(
+                              text: "\nRight Peaks: ",
+                              style: TextStyle(
+                                color: FluentTheme.of(context).accentColor,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          if (showPeaks)
+                            TextSpan(
+                              text: widget.image.indexOfRightPeaks
+                                  .map((e) => widget.image.rightAbsProjection[e]
+                                      .toStringAsFixed(2))
+                                  .toList()
+                                  .toString(),
+                            ),
+                          TextSpan(
+                            text: "\nPercentage of Defect: ",
+                            style: TextStyle(
+                              color: FluentTheme.of(context).accentColor,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          TextSpan(
+                            text:
+                                "${widget.image.percentageOfDefect.toStringAsFixed(2)} %",
+                          ),
+                        ],
+                      ),
                     ),
-                  )
+                  ),
               ],
             ),
           ),
@@ -527,7 +624,7 @@ class _ReportPopUpState extends State<ReportPopUp> {
                   globalKey: globalKey,
                   isDark: FluentTheme.of(context).brightness.isDark,
                   withBG: true,
-                  pixelRatio: 3,
+                  pixelRatio: 10,
                 );
 
                 // ignore: use_build_context_synchronously
@@ -547,7 +644,7 @@ class _ReportPopUpState extends State<ReportPopUp> {
                   globalKey: globalKey,
                   isDark: FluentTheme.of(context).brightness.isDark,
                   withBG: false,
-                  pixelRatio: 3,
+                  pixelRatio: 10,
                 );
 
                 // ignore: use_build_context_synchronously
@@ -567,7 +664,7 @@ class _ReportPopUpState extends State<ReportPopUp> {
                     globalKey: globalKey,
                     isDark: FluentTheme.of(context).brightness.isDark,
                     withBG: true,
-                    pixelRatio: 5,
+                    pixelRatio: 10,
                   );
 
                   final pwImage = pw.MemoryImage(pngBytes);
@@ -595,7 +692,7 @@ class _ReportPopUpState extends State<ReportPopUp> {
                 })
           ],
         ),
-        Button(
+        /* Button(
           child: const Text("Save as Image"),
           onPressed: () async {
             // get widget as image
@@ -614,7 +711,7 @@ class _ReportPopUpState extends State<ReportPopUp> {
                 fileType: FileType.image,
                 allowedExtensions: ["png"]);
           },
-        ),
+        ), */
         FilledButton(
           child: const Text('Close Pop Up'),
           onPressed: () => Navigator.pop(context),
