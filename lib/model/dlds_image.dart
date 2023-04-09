@@ -4,6 +4,7 @@ import 'package:dlds/backend/server.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:image/image.dart' as nimg;
 
+/// class `DLDSImage`
 class DLDSImage {
   /// Name/Path of the original image
   String imgPath;
@@ -20,20 +21,33 @@ class DLDSImage {
   /// Right Projection of original Image
   List<double> rightProjection;
 
+  /// Left Absolute Projection of original Image
+  List<double> leftAbsProjection;
+
+  /// Right Absolute Projection of original Image
+  List<double> rightAbsProjection;
+
   /// index of Peaks in leftProjection
   List<int> indexOfLeftPeaks;
 
   /// index of Peaks in leftProjection
   List<int> indexOfRightPeaks;
 
+  /// Percentage of approximate defect
+  double percentageOfDefect;
+
   DLDSImage(
-      this.imgPath,
-      this.originaImage,
-      this.processedImage,
-      this.leftProjection,
-      this.rightProjection,
-      this.indexOfLeftPeaks,
-      this.indexOfRightPeaks);
+    this.imgPath,
+    this.originaImage,
+    this.processedImage,
+    this.leftProjection,
+    this.rightProjection,
+    this.leftAbsProjection,
+    this.rightAbsProjection,
+    this.indexOfLeftPeaks,
+    this.indexOfRightPeaks,
+    this.percentageOfDefect,
+  );
 }
 
 //! TODO : The Logic is not working as expected. Need to debug the code
@@ -140,11 +154,14 @@ Future<DLDSImage> processDLDSImage(File image) async {
 
   // Image Processing Based on img matrix
   // Load the image
+
+  int defectedPixels = 0;
   nimg.Image? rawImg = nimg.decodeImage(image.readAsBytesSync());
   rawImg = nimg.decodeJpg(nimg.encodeJpg(rawImg!));
   for (int i = 0; i < img.length; i++) {
     for (int j = 0; j < img[0].length; j++) {
       if (img[i][j] > 1) {
+        defectedPixels++;
         rawImg = nimg.drawPixel(
           rawImg!,
           j,
@@ -156,9 +173,22 @@ Future<DLDSImage> processDLDSImage(File image) async {
     }
   }
 
+  double percentageOfDefect =
+      (defectedPixels / (img.length * img[0].length)) * 100;
+
   Image processedImage = Image.memory(nimg.encodeJpg(rawImg!));
-  return DLDSImage(image.path, Image.file(image), processedImage,
-      leftProjection, rightProjection, leftPeaks, rightPeaks);
+  return DLDSImage(
+    image.path,
+    Image.file(image),
+    processedImage,
+    leftProjection,
+    rightProjection,
+    leftProjectionAbs,
+    rightProjectionAbs,
+    leftPeaks,
+    rightPeaks,
+    percentageOfDefect,
+  );
 }
 
 /// Returns the average of values of all elements in the list
