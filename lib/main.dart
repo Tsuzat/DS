@@ -12,7 +12,7 @@ import 'package:process_run/shell_run.dart';
 
 final shell = Shell();
 
-final appDir = Directory.current.absolute.path;
+final String appDir = Directory.current.absolute.path;
 
 void main() async {
   // run backend
