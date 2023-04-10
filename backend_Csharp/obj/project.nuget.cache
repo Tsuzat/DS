@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "x8OM0+G9zvg6XM6qYpGXdN8vEU5B5mjC10GT1MitP5jQICSrjBPy5pBd1eKL2Nn4yLmwt2qqW84EYqK2dvo6Pg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\aloks\\Codes\\dotnet\\server\\server\\server.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\aloks\\.nuget\\packages\\mathnet.numerics\\5.0.0\\mathnet.numerics.5.0.0.nupkg.sha512",
+    "C:\\Users\\aloks\\.nuget\\packages\\system.valuetuple\\4.4.0\\system.valuetuple.4.4.0.nupkg.sha512"
+  ],
+  "logs": []
+}

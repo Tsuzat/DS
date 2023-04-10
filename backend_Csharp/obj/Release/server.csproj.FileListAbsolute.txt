@@ -1,0 +1,11 @@
+C:\Users\aloks\Codes\dotnet\server\server\bin\Release\server.exe.config
+C:\Users\aloks\Codes\dotnet\server\server\bin\Release\server.exe
+C:\Users\aloks\Codes\dotnet\server\server\bin\Release\server.pdb
+C:\Users\aloks\Codes\dotnet\server\server\bin\Release\MathNet.Numerics.dll
+C:\Users\aloks\Codes\dotnet\server\server\bin\Release\System.ValueTuple.dll
+C:\Users\aloks\Codes\dotnet\server\server\obj\Release\server.csproj.AssemblyReference.cache
+C:\Users\aloks\Codes\dotnet\server\server\obj\Release\server.csproj.SuggestedBindingRedirects.cache
+C:\Users\aloks\Codes\dotnet\server\server\obj\Release\server.csproj.CoreCompileInputs.cache
+C:\Users\aloks\Codes\dotnet\server\server\obj\Release\server.csproj.CopyComplete
+C:\Users\aloks\Codes\dotnet\server\server\obj\Release\server.exe
+C:\Users\aloks\Codes\dotnet\server\server\obj\Release\server.pdb
