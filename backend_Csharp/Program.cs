@@ -63,7 +63,7 @@ namespace server
                         // total time taken in miliseconds
                         double timeTaken = (end - start).TotalMilliseconds;
 
-                        // Multiply the two numbers and create a JSON response object
+                        // create a JSON response object
                         dynamic responseData = new { left = leftProjection, right = rightProjection, time = timeTaken };
                         string responseText = new JavaScriptSerializer().Serialize(responseData);
                         // Send the JSON response back to the client
