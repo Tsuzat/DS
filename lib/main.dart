@@ -36,7 +36,7 @@ void main() async {
   /// get present working directory
 
   String pwd = shell.path;
-  String backendExe = "$pwd\\backend_compiled\\dlds_backend.exe";
+  String backendExe = "$pwd\\backend_bin_Csharp\\server.exe";
 
   /// Checking if Backend is running using [checkBackend] function
   /// If backend is not running then run the backend

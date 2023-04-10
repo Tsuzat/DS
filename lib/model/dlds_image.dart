@@ -54,7 +54,7 @@ class DLDSImage {
 
 Future<DLDSImage> processDLDSImage(File image) async {
   String imgPath = image.path;
-  Map<String, dynamic> sendData = {"img_paths": imgPath};
+  Map<String, dynamic> sendData = {"filePath": imgPath};
   Map<String, dynamic> recvData = await svdBackEnd(sendData);
   // Received data is a map with keys as "left" and "right"
   // and values as List<dynamic>

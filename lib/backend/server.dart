@@ -18,7 +18,7 @@ Future<bool> checkBackend() async {
 }
 
 Future<Map<String, dynamic>> svdBackEnd(Map<String, dynamic> data) async {
-  Response response = await dio.post("http://127.0.0.1:8000/svd", data: data);
+  Response response = await dio.post("http://127.0.0.1:8080/svd", data: data);
   Map<String, dynamic> respData = response.data;
   return respData;
 }
