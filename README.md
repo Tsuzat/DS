@@ -1,6 +1,6 @@
-# DLDS
+# DS
 
-Deep Learning Defect Sampling (DLDS) is a university project. This project is an attempt to detect the surface defects on a steel strip from it's image.
+Defect Sampling (DS) is a university project. This project is an attempt to detect the surface defects on a steel strip from it's image.
 
 For now, we are using `Singular Value Decomposition (SVD)` to extract the features from the image. The **left singular vectors** and **right singluar vector** are used to produce the left and right projections of the image. The projections are used to determine the potential defects in the image.
 
