@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:dlds/backend/server.dart';
+import 'package:ds/backend/server.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:image/image.dart' as nimg;
 
 /// class `DLDSImage`
-class DLDSImage {
+class DSImage {
   /// Name/Path of the original image
   String imgPath;
 
@@ -36,7 +36,7 @@ class DLDSImage {
   /// Percentage of approximate defect
   double percentageOfDefect;
 
-  DLDSImage(
+  DSImage(
     this.imgPath,
     this.originaImage,
     this.processedImage,
@@ -52,7 +52,7 @@ class DLDSImage {
 
 //! TODO : The Logic is not working as expected. Need to debug the code
 
-Future<DLDSImage> processDLDSImage(File image) async {
+Future<DSImage> processDLDSImage(File image) async {
   String imgPath = image.path;
   Map<String, dynamic> sendData = {"filePath": imgPath};
   Map<String, dynamic> recvData = await svdBackEnd(sendData);
@@ -177,7 +177,7 @@ Future<DLDSImage> processDLDSImage(File image) async {
       (defectedPixels / (img.length * img[0].length)) * 100;
 
   Image processedImage = Image.memory(nimg.encodeJpg(rawImg!));
-  return DLDSImage(
+  return DSImage(
     image.path,
     Image.file(image),
     processedImage,
