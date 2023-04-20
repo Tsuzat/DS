@@ -1,3 +1,5 @@
+> Note: This is just included for showing an alternative backend in python. This code is deprecated and will not be used in any update.
+
 ## Backend For the DLDS written in python
 
 The backend for DLDS is written in python which used `fastapi` to handle the requests and `uvicorn` to run the server.
