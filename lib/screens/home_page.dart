@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:dlds/main.dart';
-import 'package:dlds/screens/project.dart';
-import 'package:dlds/screens/settings.dart';
-import 'package:dlds/theme.dart';
+import 'package:ds/main.dart';
+import 'package:ds/screens/project.dart';
+import 'package:ds/screens/settings.dart';
+import 'package:ds/theme.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';

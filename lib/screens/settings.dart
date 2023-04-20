@@ -1,4 +1,4 @@
-import 'package:dlds/theme.dart';
+import 'package:ds/theme.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:provider/provider.dart';

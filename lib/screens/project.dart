@@ -5,8 +5,8 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
 
-import 'package:dlds/main.dart';
-import 'package:dlds/model/dlds_image.dart';
+import 'package:ds/main.dart';
+import 'package:ds/model/ds_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -27,7 +27,7 @@ class _ProjectPageState extends State<ProjectPage> {
   late File projectFile;
   late List<String> projectImages;
   late String projectFilePath;
-  List<DLDSImage> images = [];
+  List<DSImage> images = [];
   List<int> selectedIndex = [];
 
   final spacer = const SizedBox(width: 20);
@@ -158,7 +158,7 @@ class _ProjectPageState extends State<ProjectPage> {
               // if user cancels delete, return
               if (confirmDelete! == false) return;
               // Delete the selectedIndex
-              List<DLDSImage> temp = [];
+              List<DSImage> temp = [];
               List<String> tmpImages = [];
               for (int i = 0; i < images.length; i++) {
                 if (selectedIndex.contains(i)) {
@@ -295,7 +295,7 @@ class ReportPopUp extends StatefulWidget {
     required this.image,
   });
 
-  final DLDSImage image;
+  final DSImage image;
 
   @override
   State<ReportPopUp> createState() => _ReportPopUpState();
