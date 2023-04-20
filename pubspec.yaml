@@ -1,5 +1,5 @@
-name: dlds
-description: A new Flutter project.
+name: ds
+description: Defect Sampling
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
@@ -45,6 +45,7 @@ dependencies:
   dio: ^5.1.0
   process_run: ^0.12.5+2
   pdf: ^3.10.1
+  url_launcher: ^6.1.7
 
 dev_dependencies:
   flutter_test:
