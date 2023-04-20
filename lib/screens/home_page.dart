@@ -9,6 +9,7 @@ import 'package:dlds/theme.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/link.dart';
 
 const List<Icon> icons = [
   Icon(FluentIcons.home),
@@ -17,6 +18,9 @@ const List<Icon> icons = [
   Icon(FluentIcons.fabric_new_folder),
   Icon(FluentIcons.new_folder),
   Icon(FluentIcons.new_team_project),
+  Icon(FluentIcons.album),
+  Icon(FluentIcons.align_vertical_bottom),
+  Icon(FluentIcons.assign),
 ];
 
 class HomePage extends StatefulWidget {
@@ -107,7 +111,13 @@ class _HomePageState extends State<HomePage> {
           }
           setState(() {});
         },
-      )
+      ),
+      _LinkPaneItemAction(
+        icon: const Icon(FluentIcons.open_source),
+        title: const Text('Source code'),
+        link: 'https://github.com/Tsuzat/DS',
+        body: const SizedBox.shrink(),
+      ),
     ];
 
     return WindowBorder(
@@ -120,7 +130,7 @@ class _HomePageState extends State<HomePage> {
           title: MoveWindow(
             child: const Align(
               alignment: AlignmentDirectional.centerStart,
-              child: Text("Deep Learning Defect Sampling"),
+              child: Text("Defect Sampling"),
             ),
           ),
           actions: Row(
@@ -281,6 +291,41 @@ class _ContentDialoagueState extends State<ContentDialoague> {
           onPressed: () => Navigator.pop(context, null),
         ),
       ],
+    );
+  }
+}
+
+class _LinkPaneItemAction extends PaneItem {
+  _LinkPaneItemAction({
+    required super.icon,
+    required this.link,
+    required super.body,
+    super.title,
+  });
+
+  final String link;
+
+  @override
+  Widget build(
+    BuildContext context,
+    bool selected,
+    VoidCallback? onPressed, {
+    PaneDisplayMode? displayMode,
+    bool showTextOnTop = true,
+    bool? autofocus,
+    int? itemIndex,
+  }) {
+    return Link(
+      uri: Uri.parse(link),
+      builder: (context, followLink) => super.build(
+        context,
+        selected,
+        followLink,
+        displayMode: displayMode,
+        showTextOnTop: showTextOnTop,
+        itemIndex: itemIndex,
+        autofocus: autofocus,
+      ),
     );
   }
 }
