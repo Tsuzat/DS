@@ -1,1 +1,4 @@
-[{"title":"Home","icon":0,"project_file":"home.json"},{"title":"Personal","icon":2,"project_file":"Personal.json"}]
+[
+  { "title": "Home", "icon": 0, "project_file": "Home.json" },
+  { "title": "Personal", "icon": 2, "project_file": "Personal.json" }
+]
