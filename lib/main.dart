@@ -25,18 +25,14 @@ void main() async {
 
   doWhenWindowReady(() {
     final win = appWindow;
-    const initialSize = Size(1050, 600);
-    win.minSize = initialSize;
-    win.size = initialSize;
+    win.minSize = const Size(800, 500);
+    win.size = const Size(1050, 600);
     win.alignment = Alignment.center;
-    win.title = "DLDS";
+    win.title = "Defect Sampling";
     win.show();
   });
 
-  /// get present working directory
-
-  String pwd = shell.path;
-  String backendExe = "$pwd\\backend_bin_Csharp\\server.exe";
+  String backendExe = "$appDir\\backend_bin_Csharp\\server.exe";
 
   /// Checking if Backend is running using [checkBackend] function
   /// If backend is not running then run the backend
