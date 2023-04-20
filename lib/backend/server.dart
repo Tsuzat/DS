@@ -2,8 +2,7 @@ import 'package:dio/dio.dart';
 
 final dio = Dio();
 
-/// Checks if the backend is running on http://127.0.0.1:8000/
-
+/// Checks if the backend is running on http://127.0.0.1:8080/
 Future<bool> checkBackend() async {
   try {
     Response response = await dio.get("http://127.0.0.1:8080");
