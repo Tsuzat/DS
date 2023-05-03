@@ -549,59 +549,58 @@ class _ReportPopUpState extends State<ReportPopUp> {
                   "Result",
                   style: FluentTheme.of(context).typography.title,
                 ),
-                if (showPeaks)
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: SelectableText.rich(
-                      TextSpan(
-                        children: [
-                          if (showPeaks)
-                            TextSpan(
-                              text: "Left Peaks: ",
-                              style: TextStyle(
-                                color: FluentTheme.of(context).accentColor,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          if (showPeaks)
-                            TextSpan(
-                              text: widget.image.indexOfLeftPeaks
-                                  .map((e) => widget.image.leftAbsProjection[e]
-                                      .toStringAsFixed(2))
-                                  .toList()
-                                  .toString(),
-                            ),
-                          if (showPeaks)
-                            TextSpan(
-                              text: "\nRight Peaks: ",
-                              style: TextStyle(
-                                color: FluentTheme.of(context).accentColor,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          if (showPeaks)
-                            TextSpan(
-                              text: widget.image.indexOfRightPeaks
-                                  .map((e) => widget.image.rightAbsProjection[e]
-                                      .toStringAsFixed(2))
-                                  .toList()
-                                  .toString(),
-                            ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: SelectableText.rich(
+                    TextSpan(
+                      children: [
+                        if (showPeaks)
                           TextSpan(
-                            text: "\nPercentage of Defect: ",
+                            text: "Left Peaks: ",
                             style: TextStyle(
                               color: FluentTheme.of(context).accentColor,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
+                        if (showPeaks)
                           TextSpan(
-                            text:
-                                "${widget.image.percentageOfDefect.toStringAsFixed(2)} %",
+                            text: widget.image.indexOfLeftPeaks
+                                .map((e) => widget.image.leftAbsProjection[e]
+                                    .toStringAsFixed(2))
+                                .toList()
+                                .toString(),
                           ),
-                        ],
-                      ),
+                        if (showPeaks)
+                          TextSpan(
+                            text: "\nRight Peaks: ",
+                            style: TextStyle(
+                              color: FluentTheme.of(context).accentColor,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        if (showPeaks)
+                          TextSpan(
+                            text: widget.image.indexOfRightPeaks
+                                .map((e) => widget.image.rightAbsProjection[e]
+                                    .toStringAsFixed(2))
+                                .toList()
+                                .toString(),
+                          ),
+                        TextSpan(
+                          text: "\nPercentage of Defect: ",
+                          style: TextStyle(
+                            color: FluentTheme.of(context).accentColor,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        TextSpan(
+                          text:
+                              "${widget.image.percentageOfDefect.toStringAsFixed(2)} %",
+                        ),
+                      ],
                     ),
                   ),
+                ),
               ],
             ),
           ),
