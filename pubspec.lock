@@ -172,9 +172,10 @@ packages:
   fluent_ui:
     dependency: "direct main"
     description:
-      path: "../../../Projects/fluent_ui"
-      relative: true
-    source: path
+      name: fluent_ui
+      sha256: dad68fd0d7df9240232ec02f658c66256cda4722c922718a966f9878a36bd7a3
+      url: "https://pub.dev"
+    source: hosted
     version: "4.5.0"
   flutter:
     dependency: "direct main"
@@ -404,14 +405,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.0"
-  scidart:
-    dependency: "direct main"
-    description:
-      name: scidart
-      sha256: af816eed552cadb6a9a324c594515b0cdff41617839345c382047927bd8dc02d
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.2-dev.12"
   scroll_pos:
     dependency: transitive
     description:
