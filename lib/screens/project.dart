@@ -778,7 +778,7 @@ Future<Uint8List> widgetToImage(
     required bool isDark}) async {
   RenderRepaintBoundary boundary =
       globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-  final ui.Image uiImage = await boundary.toImage(pixelRatio: 1);
+  final ui.Image uiImage = await boundary.toImage(pixelRatio: 3);
 
   // Add the background to image
   final recorder = ui.PictureRecorder();
