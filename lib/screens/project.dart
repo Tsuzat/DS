@@ -704,26 +704,6 @@ class _ReportPopUpState extends State<ReportPopUp> {
                 })
           ],
         ),
-        /* Button(
-          child: const Text("Save as Image"),
-          onPressed: () async {
-            // get widget as image
-            Uint8List pngBytes = await widgetToImage(
-              globalKey: globalKey,
-              isDark: FluentTheme.of(context).brightness.isDark,
-              withBG: false,
-              pixelRatio: 3,
-            );
-
-            // ignore: use_build_context_synchronously
-            saveByteDataIntoFile(
-                fileName: "${fileName}_report.png",
-                context: context,
-                dataInBytes: pngBytes,
-                fileType: FileType.image,
-                allowedExtensions: ["png"]);
-          },
-        ), */
         FilledButton(
           child: const Text('Close Pop Up'),
           onPressed: () => Navigator.pop(context),
