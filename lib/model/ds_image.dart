@@ -50,21 +50,23 @@ class DSImage {
   );
 }
 
-//! TODO : The Logic is not working as expected. Need to debug the code
-
-Future<DSImage> processDLDSImage(File image) async {
-  String imgPath = image.path;
-  Map<String, dynamic> sendData = {"filePath": imgPath};
-  Map<String, dynamic> recvData = await svdBackEnd(sendData);
-  // Received data is a map with keys as "left" and "right"
-  // and values as List<dynamic>
-  List<double> leftProjection = [];
-  List<double> rightProjection = [];
-  for (int i = 0; i < recvData['left'].length; i++) {
-    leftProjection.add(recvData['left'][i] as double);
-  }
-  for (int i = 0; i < recvData['right'].length; i++) {
-    rightProjection.add(recvData['right'][i] as double);
+Future<DSImage> processDLDSImage({
+  required String imagePath,
+  required List<int> leftProjection,
+  required List<int> rightProjection,
+}) async {
+  // if leftProjection and(or) rightProjection are empty then calculate it
+  if (leftProjection.isEmpty || rightProjection.isEmpty) {
+    Map<String, dynamic> sendData = {"filePath": imagePath};
+    Map<String, dynamic> recvData = await svdBackEnd(sendData);
+    // Received data is a map with keys as "left" and "right"
+    // and values as List<dynamic>
+    for (int i = 0; i < recvData['left'].length; i++) {
+      leftProjection.add(recvData['left'][i].toInt());
+    }
+    for (int i = 0; i < recvData['right'].length; i++) {
+      rightProjection.add(recvData['right'][i].toInt());
+    }
   }
 
   List<double> leftProjectionAbs = absOfList(leftProjection);
