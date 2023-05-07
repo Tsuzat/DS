@@ -305,6 +305,7 @@ class _ReportPopUpState extends State<ReportPopUp> {
   final GlobalKey globalKey = GlobalKey();
   final smallSpace = const SizedBox(height: 20);
   bool showGraph = true;
+  bool showAbsGraph = true;
   bool showPeaks = true;
   bool showPeaksOnGraph = true;
   @override
@@ -376,7 +377,7 @@ class _ReportPopUpState extends State<ReportPopUp> {
                 ),
                 horizonalLine,
                 smallSpace,
-                if (showGraph)
+                if (showGraph || showAbsGraph)
                   Text(
                     "Graphs of Projections",
                     style: FluentTheme.of(context).typography.title,
@@ -433,13 +434,11 @@ class _ReportPopUpState extends State<ReportPopUp> {
                     ],
                   ),
                 smallSpace,
-                if (showGraph)
+                if (showAbsGraph)
                   Row(
                     children: [
                       Expanded(
                         child: SfCartesianChart(
-                          // borderColor: FluentTheme.of(context).accentColor,
-                          // borderWidth: 1,
                           tooltipBehavior: TooltipBehavior(enable: true),
                           primaryXAxis: NumericAxis(
                             title: AxisTitle(text: 'Index for Columns'),
@@ -479,8 +478,6 @@ class _ReportPopUpState extends State<ReportPopUp> {
                       ),
                       Expanded(
                         child: SfCartesianChart(
-                          // borderColor: FluentTheme.of(context).accentColor,
-                          // borderWidth: 1,
                           tooltipBehavior: TooltipBehavior(enable: true),
                           primaryXAxis: NumericAxis(
                             title: AxisTitle(text: 'Index for Rows'),
@@ -543,7 +540,7 @@ class _ReportPopUpState extends State<ReportPopUp> {
                       const Text("Peak Points in Graph")
                     ],
                   ),
-                horizonalLine,
+                if (showAbsGraph || showGraph) horizonalLine,
                 smallSpace,
                 Text(
                   "Result",
@@ -566,7 +563,7 @@ class _ReportPopUpState extends State<ReportPopUp> {
                           TextSpan(
                             text: widget.image.indexOfLeftPeaks
                                 .map((e) => widget.image.leftAbsProjection[e]
-                                    .toStringAsFixed(2))
+                                    .toString())
                                 .toList()
                                 .toString(),
                           ),
@@ -582,7 +579,7 @@ class _ReportPopUpState extends State<ReportPopUp> {
                           TextSpan(
                             text: widget.image.indexOfRightPeaks
                                 .map((e) => widget.image.rightAbsProjection[e]
-                                    .toStringAsFixed(2))
+                                    .toString())
                                 .toList()
                                 .toString(),
                           ),
@@ -612,6 +609,12 @@ class _ReportPopUpState extends State<ReportPopUp> {
             content: const Text("Show Graph"),
             onChanged: (v) => setState(() {
                   showGraph = v;
+                })),
+        RadioButton(
+            checked: showAbsGraph,
+            content: const Text("Show Absolute Graph"),
+            onChanged: (v) => setState(() {
+                  showAbsGraph = v;
                 })),
         RadioButton(
             checked: showPeaks,
