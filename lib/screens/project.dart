@@ -25,7 +25,6 @@ class ProjectPage extends StatefulWidget {
 
 class _ProjectPageState extends State<ProjectPage> {
   late File projectFile;
-  late List<String> projectImages;
   late String projectFilePath;
   List<DSImage> images = [];
   List<int> selectedIndex = [];
@@ -38,9 +37,12 @@ class _ProjectPageState extends State<ProjectPage> {
 
     if (result != null) {
       List<String?> paths = result.paths.toList();
-      for (int i = 0; i < paths.length; i++) {
-        images.add(await processDLDSImage(File(paths[i]!)));
-        projectImages.add(paths[i]!);
+      for (String? path in paths) {
+        images.add(await processDLDSImage(
+          imagePath: path!,
+          leftProjection: [],
+          rightProjection: [],
+        ));
       }
       // Update Project Images and repaint the widget
       updateJsonFile();
@@ -52,7 +54,6 @@ class _ProjectPageState extends State<ProjectPage> {
 
   void loadProject() async {
     projectFilePath = "$appDir\\Projects\\${widget.projectFileName}";
-    projectImages = [];
     // read json file path
     projectFile = File(projectFilePath);
     // If projectFile does not exists then create one
@@ -66,13 +67,25 @@ class _ProjectPageState extends State<ProjectPage> {
     String tmp = await projectFile.readAsString();
     var data = jsonDecode(tmp);
 
-    for (int i = 0; i < data.length; i++) {
-      projectImages.add(data[i].toString());
-    }
-
     // Add the loaded image paths to `List<DLDSImage> images`
-    for (String imgPath in projectImages) {
-      images.add(await processDLDSImage(File(imgPath)));
+    for (int i = 0; i < data.length; i++) {
+      String imagePath = data[i]["path"].toString();
+      // convert List<dynamic> to List<double>
+      List<int> leftProjection = [];
+      for (var i in data[i]["left"]) {
+        leftProjection.add(i.toInt());
+      }
+      List<int> rightProjection = [];
+      for (var i in data[i]["right"]) {
+        rightProjection.add(i.toInt());
+      }
+      images.add(
+        await processDLDSImage(
+          imagePath: imagePath,
+          leftProjection: leftProjection,
+          rightProjection: rightProjection,
+        ),
+      );
     }
 
     // Re-paint the widget after loading add files
@@ -80,7 +93,14 @@ class _ProjectPageState extends State<ProjectPage> {
   }
 
   void updateJsonFile() async {
-    await projectFile.writeAsString(jsonEncode(projectImages));
+    List<Map<String, dynamic>> data = images
+        .map((e) => {
+              "path": e.imgPath,
+              "left": e.leftProjection,
+              "right": e.rightProjection,
+            })
+        .toList();
+    await projectFile.writeAsString(jsonEncode(data));
   }
 
   @override
@@ -95,12 +115,12 @@ class _ProjectPageState extends State<ProjectPage> {
     final simpleCommandBarItems = <CommandBarItem>[
       CommandBarBuilderItem(
         builder: (context, mode, w) => Tooltip(
-          message: "Add Images",
+          message: "Add New Images in Project",
           child: w,
         ),
         wrappedItem: CommandBarButton(
           icon: const Icon(FluentIcons.add),
-          label: const Text('New'),
+          label: const Text('Add'),
           onPressed: () {
             addNewImages();
           },
@@ -108,7 +128,7 @@ class _ProjectPageState extends State<ProjectPage> {
       ),
       CommandBarBuilderItem(
         builder: (context, mode, w) => Tooltip(
-          message: "Delete",
+          message: "Delete Selected Images",
           child: w,
         ),
         wrappedItem: CommandBarButton(
@@ -137,8 +157,8 @@ class _ProjectPageState extends State<ProjectPage> {
                 builder: (context) => ContentDialog(
                   title: const Text('Delete files permanently?'),
                   content: const Text(
-                    'If you delete files, you won\'t be able to recover it.'
-                    'Don\'t worry, file will not be deleted from your system but just from this project.'
+                    'If you delete files, you won\'t be able to recover it. '
+                    'Don\'t worry, file will not be deleted from your system but just from this project. '
                     'Do you want to delete it?',
                   ),
                   actions: [
@@ -159,13 +179,11 @@ class _ProjectPageState extends State<ProjectPage> {
               if (confirmDelete! == false) return;
               // Delete the selectedIndex
               List<DSImage> temp = [];
-              List<String> tmpImages = [];
               for (int i = 0; i < images.length; i++) {
                 if (selectedIndex.contains(i)) {
                   continue;
                 }
                 temp.add(images[i]);
-                tmpImages.add(images[i].imgPath);
               }
               // ignore: use_build_context_synchronously
               displayInfoBar(
@@ -183,7 +201,6 @@ class _ProjectPageState extends State<ProjectPage> {
                 },
               );
               images = temp;
-              projectImages = tmpImages;
               updateJsonFile();
               selectedIndex = [];
               setState(() {});
@@ -220,7 +237,7 @@ class _ProjectPageState extends State<ProjectPage> {
           title: Text(widget.projectFileName.replaceAll('.json', '')),
           commandBar: CommandBar(
             mainAxisAlignment: MainAxisAlignment.end,
-            overflowBehavior: CommandBarOverflowBehavior.noWrap,
+            overflowBehavior: CommandBarOverflowBehavior.dynamicOverflow,
             primaryItems: [
               ...simpleCommandBarItems,
             ],
