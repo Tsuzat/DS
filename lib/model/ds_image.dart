@@ -16,16 +16,16 @@ class DSImage {
   final Image processedImage;
 
   /// Left Projection of original Image
-  List<double> leftProjection;
+  List<int> leftProjection;
 
   /// Right Projection of original Image
-  List<double> rightProjection;
+  List<int> rightProjection;
 
   /// Left Absolute Projection of original Image
-  List<double> leftAbsProjection;
+  List<int> leftAbsProjection;
 
   /// Right Absolute Projection of original Image
-  List<double> rightAbsProjection;
+  List<int> rightAbsProjection;
 
   /// index of Peaks in leftProjection
   List<int> indexOfLeftPeaks;
@@ -69,8 +69,8 @@ Future<DSImage> processDLDSImage({
     }
   }
 
-  List<double> leftProjectionAbs = absOfList(leftProjection);
-  List<double> rightProjectionAbs = absOfList(rightProjection);
+  List<int> leftProjectionAbs = absOfList(leftProjection);
+  List<int> rightProjectionAbs = absOfList(rightProjection);
 
   // Finding the average of left and right projection with absolute values
   double leftAvg = average(leftProjectionAbs);
@@ -80,8 +80,8 @@ Future<DSImage> processDLDSImage({
   List<int> leftPeaks = indexOfPeaks(leftProjectionAbs, leftAvg);
   List<int> rightPeaks = indexOfPeaks(rightProjectionAbs, rightAvg);
 
-  // a List<List<double> that has dimensions of the image and initialized with 0
-  List<List<double>> img = List.generate(
+  // a List<List<int> that has dimensions of the image and initialized with 0
+  List<List<int>> img = List.generate(
       leftProjection.length, (index) => List.filled(rightProjection.length, 0));
 
   // Set of visited values
@@ -158,7 +158,7 @@ Future<DSImage> processDLDSImage({
   // Load the image
 
   int defectedPixels = 0;
-  nimg.Image? rawImg = nimg.decodeImage(image.readAsBytesSync());
+  nimg.Image? rawImg = nimg.decodeImage(File(imagePath).readAsBytesSync());
   rawImg = nimg.decodeJpg(nimg.encodeJpg(rawImg!));
   for (int i = 0; i < img.length; i++) {
     for (int j = 0; j < img[0].length; j++) {
@@ -180,8 +180,8 @@ Future<DSImage> processDLDSImage({
 
   Image processedImage = Image.memory(nimg.encodeJpg(rawImg!));
   return DSImage(
-    image.path,
-    Image.file(image),
+    imagePath,
+    Image.file(File(imagePath)),
     processedImage,
     leftProjection,
     rightProjection,
@@ -194,7 +194,7 @@ Future<DSImage> processDLDSImage({
 }
 
 /// Returns the average of values of all elements in the list
-double average(List<double> arr) {
+double average(List<int> arr) {
   double avg = 0;
   for (int i = 0; i < arr.length; i++) {
     avg += arr[i];
@@ -204,7 +204,7 @@ double average(List<double> arr) {
 }
 
 /// Returns the index of all peaks in the list
-List<int> indexOfPeaks(List<double> arr, double tolerance) {
+List<int> indexOfPeaks(List<int> arr, double tolerance) {
   List<int> peaks = [];
   for (int i = 1; i < arr.length - 1; i++) {
     if (arr[i] < tolerance) continue;
@@ -216,8 +216,8 @@ List<int> indexOfPeaks(List<double> arr, double tolerance) {
 }
 
 /// Returns the List with absolute values
-List<double> absOfList(List<double> arr) {
-  List<double> absArr = [];
+List<int> absOfList(List<int> arr) {
+  List<int> absArr = [];
   for (int i = 0; i < arr.length; i++) {
     absArr.add(arr[i].abs());
   }
