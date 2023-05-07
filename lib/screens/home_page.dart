@@ -33,7 +33,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<NavigationPaneItem> items = [];
 
-  var projectData;
+  late List<dynamic> projectData;
 
   final String projectJsonFilePath = "$appDir\\Projects\\projects.json";
 
