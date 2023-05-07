@@ -6,6 +6,7 @@ using System.Text;
 using System.Web.Script.Serialization;
 using MathNet.Numerics.LinearAlgebra;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace server
 {
@@ -43,8 +44,6 @@ namespace server
 
                     else if (context.Request.HttpMethod == "POST" && url == $"{baseUrl}svd")
                     {
-                        // Starting the time 
-                        DateTime start = DateTime.Now;
 
                         // Read the request body as a string
                         StreamReader reader = new StreamReader(context.Request.InputStream, context.Request.ContentEncoding);
@@ -54,17 +53,12 @@ namespace server
                         // Extract the two numbers from the request data
                         string filePath = requestData["filePath"];
                         Dictionary<string, Vector<double>> projections = GrayscaleConverter.calculateSVDofMatrix(filePath);
-                        Vector<double> leftProjection = projections["left"];
-                        Vector<double> rightProjection = projections["right"];
+                        List<int> leftProjection = projections["left"].Select(x => (int)x).ToList();
+                        List<int> rightProjection = projections["right"].Select(x => (int)x).ToList();
 
-                        // End the time
-                        DateTime end = DateTime.Now;
-
-                        // total time taken in miliseconds
-                        double timeTaken = (end - start).TotalMilliseconds;
 
                         // create a JSON response object
-                        dynamic responseData = new { left = leftProjection, right = rightProjection, time = timeTaken };
+                        dynamic responseData = new { left = leftProjection, right = rightProjection };
                         string responseText = new JavaScriptSerializer().Serialize(responseData);
                         // Send the JSON response back to the client
                         byte[] responseBytes = Encoding.UTF8.GetBytes(responseText);
@@ -101,7 +95,7 @@ public class GrayscaleConverter
 
     public static Dictionary<string, Vector<double>> calculateSVDofMatrix(string filePath)
 
-    {   
+    {
         Bitmap bmp = new Bitmap(filePath);
         double[,] matrix = new double[bmp.Height, bmp.Width];
 
