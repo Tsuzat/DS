@@ -289,7 +289,14 @@ class _ProjectPageState extends State<ProjectPage> {
                       ),
                     ],
                   ),
-                  subtitle: Text(images[index].imgPath),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(images[index].imgPath),
+                      Text(
+                          "Defect: ${images[index].percentageOfDefect.toStringAsFixed(2)}%")
+                    ],
+                  ),
                   onPressed: () async {
                     await showDialog(
                       context: context,
