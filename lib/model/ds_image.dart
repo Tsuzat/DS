@@ -107,8 +107,8 @@ Future<DSImage> processDLDSImage({
       }
     }
     // Do the same for rightPonter
-    while (rightPointer < leftPeaks.length &&
-        leftProjection[rightPointer] > leftAvg) {
+    while (rightPointer < colVisited.length &&
+        leftProjectionAbs[rightPointer] > leftAvg) {
       if (colVisited[rightPointer] == true) {
         rightPointer++;
         continue;
@@ -139,8 +139,8 @@ Future<DSImage> processDLDSImage({
         leftPointer--;
       }
     }
-    while (rightPointer < rightPeaks.length &&
-        rightProjection[rightPointer] > rightAvg) {
+    while (rightPointer < rowVisited.length &&
+        rightProjectionAbs[rightPointer] > rightAvg) {
       if (rowVisited[rightPointer] == true) {
         rightPointer++;
         continue;
