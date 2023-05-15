@@ -570,57 +570,171 @@ class _ReportPopUpState extends State<ReportPopUp> {
                   "Result",
                   style: FluentTheme.of(context).typography.title,
                 ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: SelectableText.rich(
-                    TextSpan(
+                // SizedBox(
+                //   width: MediaQuery.of(context).size.width,
+                //   child: SelectableText.rich(
+                //     TextSpan(
+                //       children: [
+                //         if (showPeaks)
+                //           TextSpan(
+                //             text: "Left Peaks: ",
+                //             style: TextStyle(
+                //               color: FluentTheme.of(context).accentColor,
+                //               fontWeight: FontWeight.w700,
+                //             ),
+                //           ),
+                //         if (showPeaks)
+                //           TextSpan(
+                //             text: widget.image.indexOfLeftPeaks
+                //                 .map((e) => widget.image.leftAbsProjection[e]
+                //                     .toString())
+                //                 .toList()
+                //                 .toString(),
+                //           ),
+                //         if (showPeaks)
+                //           TextSpan(
+                //             text: "\nRight Peaks: ",
+                //             style: TextStyle(
+                //               color: FluentTheme.of(context).accentColor,
+                //               fontWeight: FontWeight.w700,
+                //             ),
+                //           ),
+                //         if (showPeaks)
+                //           TextSpan(
+                //             text: widget.image.indexOfRightPeaks
+                //                 .map((e) => widget.image.rightAbsProjection[e]
+                //                     .toString())
+                //                 .toList()
+                //                 .toString(),
+                //           ),
+                //         TextSpan(
+                //           text: "\nPercentage of Defect: ",
+                //           style: TextStyle(
+                //             color: FluentTheme.of(context).accentColor,
+                //             fontWeight: FontWeight.w700,
+                //           ),
+                //         ),
+                //         TextSpan(
+                //           text:
+                //               "${widget.image.percentageOfDefect.toStringAsFixed(2)} %",
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
+                Table(
+                  border: TableBorder.all(
+                    color: FluentTheme.of(context).brightness.isDark
+                        ? Colors.white
+                        : Colors.black,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  columnWidths: const <int, TableColumnWidth>{
+                    0: IntrinsicColumnWidth(),
+                    1: FlexColumnWidth(),
+                  },
+                  children: <TableRow>[
+                    TableRow(
                       children: [
-                        if (showPeaks)
-                          TextSpan(
-                            text: "Left Peaks: ",
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "Name",
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                               color: FluentTheme.of(context).accentColor,
                               fontWeight: FontWeight.w700,
                             ),
-                          ),
-                        if (showPeaks)
-                          TextSpan(
-                            text: widget.image.indexOfLeftPeaks
-                                .map((e) => widget.image.leftAbsProjection[e]
-                                    .toString())
-                                .toList()
-                                .toString(),
-                          ),
-                        if (showPeaks)
-                          TextSpan(
-                            text: "\nRight Peaks: ",
-                            style: TextStyle(
-                              color: FluentTheme.of(context).accentColor,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        if (showPeaks)
-                          TextSpan(
-                            text: widget.image.indexOfRightPeaks
-                                .map((e) => widget.image.rightAbsProjection[e]
-                                    .toString())
-                                .toList()
-                                .toString(),
-                          ),
-                        TextSpan(
-                          text: "\nPercentage of Defect: ",
-                          style: TextStyle(
-                            color: FluentTheme.of(context).accentColor,
-                            fontWeight: FontWeight.w700,
                           ),
                         ),
-                        TextSpan(
-                          text:
-                              "${widget.image.percentageOfDefect.toStringAsFixed(2)} %",
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "Value",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: FluentTheme.of(context).accentColor,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                  ),
+                    TableRow(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SelectableText(
+                            "Left Peaks (as [index, value])",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: FluentTheme.of(context).accentColor,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SelectableText(
+                            widget.image.indexOfLeftPeaks
+                                .map((e) =>
+                                    [e, widget.image.leftAbsProjection[e]])
+                                .toList()
+                                .toString(),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+                    TableRow(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SelectableText(
+                            "Right Peaks (as [index, value])",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: FluentTheme.of(context).accentColor,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SelectableText(
+                            widget.image.indexOfRightPeaks
+                                .map((e) =>
+                                    [e, widget.image.rightAbsProjection[e]])
+                                .toList()
+                                .toString(),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+                    TableRow(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SelectableText(
+                            "Defect in percentage",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: FluentTheme.of(context).accentColor,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SelectableText(
+                            "${widget.image.percentageOfDefect.toStringAsFixed(2)} %",
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
                 ),
               ],
             ),
